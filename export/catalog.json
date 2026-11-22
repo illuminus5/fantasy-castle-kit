@@ -45,14 +45,38 @@
     "empty"
    ]
   },
+  "junction": {
+   "air": true,
+   "fits": [
+    "wall_edge",
+    "junction",
+    "tower_side",
+    "parapet_side",
+    "keep_side",
+    "turret_port"
+   ],
+   "above": [
+    "empty"
+   ]
+  },
+  "turret_port": {
+   "air": false,
+   "fits": [
+    "wall_edge",
+    "wall_side",
+    "junction"
+   ]
+  },
   "turret_side": {
    "air": true
   },
   "gate_face": {
-   "air": true
+   "air": true,
+   "align_as": "wall_side"
   },
   "ruin_side": {
-   "air": true
+   "air": true,
+   "align_as": "wall_side"
   },
   "house_base": {
    "air": false,
@@ -69,6 +93,7 @@
    "fits": [
     "house_gable",
     "wall_side",
+    "junction",
     "tower_side"
    ],
    "above": [
@@ -82,8 +107,12 @@
   "keep_top": {
    "air": true,
    "fits": [
-    "keep_base"
+    "keep_base",
+    "keep_roof_base"
    ]
+  },
+  "keep_roof_base": {
+   "air": false
   },
   "tower_base": {
    "air": false
@@ -119,13 +148,25 @@
    "lands": true,
    "fits": [
     "wall_side",
+    "junction",
     "tower_side",
     "keep_side",
     "house_gable"
    ]
   },
   "keep_side": {
-   "air": true
+   "air": true,
+   "fits": [
+    "wall_edge",
+    "junction",
+    "turret_port",
+    "tower_side",
+    "parapet_side"
+   ],
+   "above": [
+    "keep_side",
+    "empty"
+   ]
   },
   "roof_seat": {
    "air": true,
@@ -144,6 +185,7 @@
     "bridge_link",
     "tower_side",
     "wall_side",
+    "junction",
     "keep_side",
     "house_gable"
    ]
@@ -154,6 +196,10 @@
   "bridge_span": {
    "air": true
   }
+ },
+ "aliases": {
+  "wall_corner": "wall_junction",
+  "wall_t": "wall_junction"
  },
  "pieces": [
   {
@@ -197,17 +243,17 @@
    },
    "aabb": [
     [
-     -1.0,
+     -1.012,
      0.32,
      -0.362
     ],
     [
-     1.0,
+     1.012,
      1.8,
      0.362
     ]
    ],
-   "tris": 100,
+   "tris": 140,
    "solids": [
     [
      [
@@ -216,7 +262,7 @@
       0.0
      ],
      [
-      1.0,
+      1.012,
       0.74,
       0.362
      ]
@@ -251,15 +297,6 @@
      "tris": 44
     },
     {
-     "id": "crown",
-     "mesh": "wall_straight__crown",
-     "cell": 0,
-     "when": [
-      "u:empty"
-     ],
-     "tris": 264
-    },
-    {
      "id": "fill",
      "mesh": "wall_straight__fill",
      "cell": 0,
@@ -267,125 +304,31 @@
       "u:wall_base"
      ],
      "tris": 32
+    },
+    {
+     "id": "crown_n",
+     "mesh": "wall_straight__crown_n",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "n:!stairs_top|bridge_link"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "crown_s",
+     "mesh": "wall_straight__crown_s",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "s:!stairs_top|bridge_link"
+     ],
+     "tris": 132
     }
    ]
   },
   {
-   "id": "wall_corner",
-   "name": "Wall corner",
-   "category": "walls",
-   "roles": [
-    "stone",
-    "moss",
-    "timber",
-    "iron"
-   ],
-   "cells": [
-    [
-     0,
-     0,
-     0
-    ]
-   ],
-   "faces": [
-    {
-     "d": "wall_base",
-     "u": "wall_top",
-     "e": "wall_edge",
-     "n": "wall_edge",
-     "s": "wall_side",
-     "w": "wall_side"
-    }
-   ],
-   "sym": 4,
-   "layer": "main",
-   "gen": {
-    "w": 1.0,
-    "y": [
-     0,
-     1
-    ],
-    "tags": [
-     "wall"
-    ]
-   },
-   "aabb": [
-    [
-     -0.362,
-     0.32,
-     -0.362
-    ],
-    [
-     1.0,
-     1.8,
-     1.0
-    ]
-   ],
-   "tris": 132,
-   "solids": [
-    [
-     [
-      0.319,
-      1.06,
-      0.319
-     ],
-     [
-      0.681,
-      0.74,
-      0.681
-     ]
-    ]
-   ],
-   "parts": [
-    {
-     "id": "plinth",
-     "mesh": "wall_corner__plinth",
-     "cell": 0,
-     "when": [
-      "d:!wall_top"
-     ],
-     "tris": 264
-    },
-    {
-     "id": "sole",
-     "mesh": "wall_corner__sole",
-     "cell": 0,
-     "when": [
-      "d:wall_top"
-     ],
-     "tris": 48
-    },
-    {
-     "id": "cap",
-     "mesh": "wall_corner__cap",
-     "cell": 0,
-     "when": [
-      "u:!wall_base"
-     ],
-     "tris": 88
-    },
-    {
-     "id": "crown",
-     "mesh": "wall_corner__crown",
-     "cell": 0,
-     "when": [
-      "u:empty"
-     ],
-     "tris": 264
-    },
-    {
-     "id": "fill",
-     "mesh": "wall_corner__fill",
-     "cell": 0,
-     "when": [
-      "u:wall_base"
-     ],
-     "tris": 48
-    }
-   ]
-  },
-  {
-   "id": "wall_t",
+   "id": "wall_junction",
    "name": "Wall junction",
    "category": "walls",
    "roles": [
@@ -405,16 +348,16 @@
     {
      "d": "wall_base",
      "u": "wall_top",
-     "e": "wall_edge",
-     "w": "wall_edge",
-     "n": "wall_edge",
-     "s": "wall_side"
+     "n": "junction",
+     "e": "junction",
+     "s": "junction",
+     "w": "junction"
     }
    ],
-   "sym": 4,
+   "sym": 1,
    "layer": "main",
    "gen": {
-    "w": 0.3,
+    "w": 1.0,
     "y": [
      0,
      1
@@ -423,78 +366,410 @@
      "wall"
     ]
    },
+   "gen_faces": [
+    {
+     "w": 1.0,
+     "faces": [
+      {
+       "d": "wall_base",
+       "u": "wall_top",
+       "e": "wall_edge",
+       "n": "wall_edge",
+       "s": "wall_side",
+       "w": "wall_side"
+      }
+     ]
+    },
+    {
+     "w": 0.3,
+     "faces": [
+      {
+       "d": "wall_base",
+       "u": "wall_top",
+       "e": "wall_edge",
+       "w": "wall_edge",
+       "n": "wall_edge",
+       "s": "wall_side"
+      }
+     ]
+    },
+    {
+     "w": 0.08,
+     "faces": [
+      {
+       "d": "wall_base",
+       "u": "wall_top",
+       "e": "wall_edge",
+       "w": "wall_edge",
+       "n": "wall_edge",
+       "s": "wall_edge"
+      }
+     ]
+    }
+   ],
    "aabb": [
     [
-     -1.0,
+     -0.362,
      0.32,
      -0.362
     ],
     [
-     1.0,
+     0.362,
      1.8,
-     1.0
+     0.362
     ]
    ],
-   "tris": 152,
+   "tris": 92,
    "solids": [
     [
      [
       0.0,
       1.06,
-      0.319
+      0.0
      ],
      [
-      1.0,
+      0.362,
       0.74,
-      0.681
+      0.362
      ]
     ]
    ],
    "parts": [
     {
      "id": "plinth",
-     "mesh": "wall_t__plinth",
+     "mesh": "wall_junction__plinth",
      "cell": 0,
      "when": [
       "d:!wall_top"
      ],
-     "tris": 264
+     "tris": 132
     },
     {
      "id": "sole",
-     "mesh": "wall_t__sole",
+     "mesh": "wall_junction__sole",
      "cell": 0,
      "when": [
       "d:wall_top"
      ],
-     "tris": 52
+     "tris": 20
     },
     {
      "id": "cap",
-     "mesh": "wall_t__cap",
+     "mesh": "wall_junction__cap",
      "cell": 0,
      "when": [
       "u:!wall_base"
      ],
-     "tris": 88
-    },
-    {
-     "id": "crown",
-     "mesh": "wall_t__crown",
-     "cell": 0,
-     "when": [
-      "u:empty"
-     ],
-     "tris": 352
+     "tris": 44
     },
     {
      "id": "fill",
-     "mesh": "wall_t__fill",
+     "mesh": "wall_junction__fill",
      "cell": 0,
      "when": [
       "u:wall_base"
      ],
-     "tris": 52
+     "tris": 20
+    },
+    {
+     "id": "post_crown_n",
+     "mesh": "wall_junction__post_crown_n",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "n:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port|stairs_top|bridge_link"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "post_crown_e",
+     "mesh": "wall_junction__post_crown_e",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "e:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port|stairs_top|bridge_link"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "post_crown_s",
+     "mesh": "wall_junction__post_crown_s",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "s:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port|stairs_top|bridge_link"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "post_crown_w",
+     "mesh": "wall_junction__post_crown_w",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "w:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port|stairs_top|bridge_link"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "arm_n",
+     "mesh": "wall_junction__arm_n",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 72
+    },
+    {
+     "id": "arm_e",
+     "mesh": "wall_junction__arm_e",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 72
+    },
+    {
+     "id": "arm_s",
+     "mesh": "wall_junction__arm_s",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 72
+    },
+    {
+     "id": "arm_w",
+     "mesh": "wall_junction__arm_w",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 72
+    },
+    {
+     "id": "arm_n_plinth",
+     "mesh": "wall_junction__arm_n_plinth",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "arm_n_sole",
+     "mesh": "wall_junction__arm_n_sole",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:wall_top"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_n_cap",
+     "mesh": "wall_junction__arm_n_cap",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "arm_n_fill",
+     "mesh": "wall_junction__arm_n_fill",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:wall_base"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_e_plinth",
+     "mesh": "wall_junction__arm_e_plinth",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "arm_e_sole",
+     "mesh": "wall_junction__arm_e_sole",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:wall_top"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_e_cap",
+     "mesh": "wall_junction__arm_e_cap",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "arm_e_fill",
+     "mesh": "wall_junction__arm_e_fill",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:wall_base"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_s_plinth",
+     "mesh": "wall_junction__arm_s_plinth",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "arm_s_sole",
+     "mesh": "wall_junction__arm_s_sole",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:wall_top"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_s_cap",
+     "mesh": "wall_junction__arm_s_cap",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "arm_s_fill",
+     "mesh": "wall_junction__arm_s_fill",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:wall_base"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_w_plinth",
+     "mesh": "wall_junction__arm_w_plinth",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "arm_w_sole",
+     "mesh": "wall_junction__arm_w_sole",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "d:wall_top"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_w_cap",
+     "mesh": "wall_junction__arm_w_cap",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "arm_w_fill",
+     "mesh": "wall_junction__arm_w_fill",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:wall_base"
+     ],
+     "tris": 20
+    },
+    {
+     "id": "arm_n_crown",
+     "mesh": "wall_junction__arm_n_crown",
+     "cell": 0,
+     "when": [
+      "n:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:empty"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "arm_e_crown",
+     "mesh": "wall_junction__arm_e_crown",
+     "cell": 0,
+     "when": [
+      "e:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:empty"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "arm_s_crown",
+     "mesh": "wall_junction__arm_s_crown",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:empty"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "arm_w_crown",
+     "mesh": "wall_junction__arm_w_crown",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "u:empty"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "tray_e",
+     "mesh": "wall_junction__tray_e",
+     "cell": 0,
+     "when": [
+      "n:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "e:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "s:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "w:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 336
+    },
+    {
+     "id": "tray_n",
+     "mesh": "wall_junction__tray_n",
+     "cell": 0,
+     "when": [
+      "n:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "e:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "s:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port",
+      "w:!wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"
+     ],
+     "tris": 336
     }
    ]
   },
@@ -519,7 +794,7 @@
     {
      "d": "wall_base",
      "u": "wall_top",
-     "w": "wall_edge",
+     "w": "turret_port",
      "n": "turret_side",
      "e": "turret_side",
      "s": "turret_side"
@@ -539,7 +814,7 @@
    },
    "aabb": [
     [
-     -1.0,
+     -1.012,
      0.32,
      -0.5719
     ],
@@ -549,16 +824,16 @@
      0.5719
     ]
    ],
-   "tris": 252,
+   "tris": 272,
    "solids": [
     [
      [
-      -0.2141,
+      -0.2201,
       1.16,
       0.0
      ],
      [
-      0.7859,
+      0.7919,
       0.84,
       0.5719
      ]
@@ -593,6 +868,15 @@
      "tris": 44
     },
     {
+     "id": "fill",
+     "mesh": "wall_end__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 24
+    },
+    {
      "id": "crown",
      "mesh": "wall_end__crown",
      "cell": 0,
@@ -602,13 +886,13 @@
      "tris": 412
     },
     {
-     "id": "fill",
-     "mesh": "wall_end__fill",
+     "id": "reach",
+     "mesh": "wall_end__reach",
      "cell": 0,
      "when": [
-      "u:wall_base"
+      "w:wall_side"
      ],
-     "tris": 24
+     "tris": 316
     }
    ]
   },
@@ -653,17 +937,17 @@
    },
    "aabb": [
     [
-     -1.0,
+     -1.012,
      0.32,
      -0.412
     ],
     [
-     1.0,
+     1.012,
      1.8,
      0.412
     ]
    ],
-   "tris": 660,
+   "tris": 700,
    "solids": [
     [
      [
@@ -672,7 +956,7 @@
       0.0
      ],
      [
-      1.0,
+      1.012,
       0.74,
       0.412
      ]
@@ -707,15 +991,6 @@
      "tris": 44
     },
     {
-     "id": "crown",
-     "mesh": "wall_window__crown",
-     "cell": 0,
-     "when": [
-      "u:empty"
-     ],
-     "tris": 264
-    },
-    {
      "id": "fill",
      "mesh": "wall_window__fill",
      "cell": 0,
@@ -723,6 +998,26 @@
       "u:wall_base"
      ],
      "tris": 32
+    },
+    {
+     "id": "crown_n",
+     "mesh": "wall_window__crown_n",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "n:!stairs_top|bridge_link"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "crown_s",
+     "mesh": "wall_window__crown_s",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "s:!stairs_top|bridge_link"
+     ],
+     "tris": 132
     }
    ]
   },
@@ -767,17 +1062,17 @@
    },
    "aabb": [
     [
-     -1.0,
+     -1.012,
      0.32,
      -0.42
     ],
     [
-     1.0,
+     1.012,
      1.8,
      0.42
     ]
    ],
-   "tris": 1076,
+   "tris": 1128,
    "solids": [
     [
      [
@@ -786,7 +1081,7 @@
       0.0
      ],
      [
-      1.0,
+      1.012,
       0.74,
       0.42
      ]
@@ -821,15 +1116,6 @@
      "tris": 44
     },
     {
-     "id": "crown",
-     "mesh": "wall_gate__crown",
-     "cell": 0,
-     "when": [
-      "u:empty"
-     ],
-     "tris": 264
-    },
-    {
      "id": "fill",
      "mesh": "wall_gate__fill",
      "cell": 0,
@@ -837,6 +1123,26 @@
       "u:wall_base"
      ],
      "tris": 32
+    },
+    {
+     "id": "crown_n",
+     "mesh": "wall_gate__crown_n",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "n:!stairs_top|bridge_link"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "crown_s",
+     "mesh": "wall_gate__crown_s",
+     "cell": 0,
+     "when": [
+      "u:empty",
+      "s:!stairs_top|bridge_link"
+     ],
+     "tris": 132
     },
     {
      "id": "gatehouse",
@@ -969,7 +1275,7 @@
      0.99
     ]
    ],
-   "tris": 910,
+   "tris": 912,
    "solids": [
     [
      [
@@ -990,7 +1296,7 @@
      "mesh": "tower_base__shoulder_n",
      "cell": 0,
      "when": [
-      "n:wall_edge"
+      "n:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -999,7 +1305,7 @@
      "mesh": "tower_base__shoulder_e",
      "cell": 0,
      "when": [
-      "e:wall_edge"
+      "e:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1008,7 +1314,7 @@
      "mesh": "tower_base__shoulder_s",
      "cell": 0,
      "when": [
-      "s:wall_edge"
+      "s:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1017,7 +1323,7 @@
      "mesh": "tower_base__shoulder_w",
      "cell": 0,
      "when": [
-      "w:wall_edge"
+      "w:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1026,7 +1332,7 @@
      "mesh": "tower_base__link_n",
      "cell": 0,
      "when": [
-      "n:tower_side|parapet_side"
+      "n:tower_side|parapet_side|keep_side"
      ],
      "tris": 80
     },
@@ -1035,7 +1341,7 @@
      "mesh": "tower_base__link_e",
      "cell": 0,
      "when": [
-      "e:tower_side|parapet_side"
+      "e:tower_side|parapet_side|keep_side"
      ],
      "tris": 80
     },
@@ -1044,7 +1350,7 @@
      "mesh": "tower_base__link_s",
      "cell": 0,
      "when": [
-      "s:tower_side|parapet_side"
+      "s:tower_side|parapet_side|keep_side"
      ],
      "tris": 80
     },
@@ -1053,7 +1359,7 @@
      "mesh": "tower_base__link_w",
      "cell": 0,
      "when": [
-      "w:tower_side|parapet_side"
+      "w:tower_side|parapet_side|keep_side"
      ],
      "tris": 80
     }
@@ -1110,7 +1416,7 @@
      1.002
     ]
    ],
-   "tris": 492,
+   "tris": 508,
    "solids": [
     [
      [
@@ -1131,7 +1437,7 @@
      "mesh": "tower_mid__shoulder_n",
      "cell": 0,
      "when": [
-      "n:wall_edge"
+      "n:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1140,7 +1446,7 @@
      "mesh": "tower_mid__shoulder_e",
      "cell": 0,
      "when": [
-      "e:wall_edge"
+      "e:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1149,7 +1455,7 @@
      "mesh": "tower_mid__shoulder_s",
      "cell": 0,
      "when": [
-      "s:wall_edge"
+      "s:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1158,7 +1464,7 @@
      "mesh": "tower_mid__shoulder_w",
      "cell": 0,
      "when": [
-      "w:wall_edge"
+      "w:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1167,7 +1473,7 @@
      "mesh": "tower_mid__link_n",
      "cell": 0,
      "when": [
-      "n:tower_side|parapet_side"
+      "n:tower_side|parapet_side|keep_side"
      ],
      "tris": 40
     },
@@ -1176,7 +1482,7 @@
      "mesh": "tower_mid__link_e",
      "cell": 0,
      "when": [
-      "e:tower_side|parapet_side"
+      "e:tower_side|parapet_side|keep_side"
      ],
      "tris": 40
     },
@@ -1185,7 +1491,7 @@
      "mesh": "tower_mid__link_s",
      "cell": 0,
      "when": [
-      "s:tower_side|parapet_side"
+      "s:tower_side|parapet_side|keep_side"
      ],
      "tris": 40
     },
@@ -1194,7 +1500,7 @@
      "mesh": "tower_mid__link_w",
      "cell": 0,
      "when": [
-      "w:tower_side|parapet_side"
+      "w:tower_side|parapet_side|keep_side"
      ],
      "tris": 40
     },
@@ -1204,7 +1510,7 @@
      "cell": 0,
      "when": [
       "n:empty",
-      "n-:wall_edge|stairs_top|bridge_link"
+      "n-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1214,7 +1520,7 @@
      "cell": 0,
      "when": [
       "e:empty",
-      "e-:wall_edge|stairs_top|bridge_link"
+      "e-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1224,7 +1530,7 @@
      "cell": 0,
      "when": [
       "s:empty",
-      "s-:wall_edge|stairs_top|bridge_link"
+      "s-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1234,7 +1540,7 @@
      "cell": 0,
      "when": [
       "w:empty",
-      "w-:wall_edge|stairs_top|bridge_link"
+      "w-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     }
@@ -1312,7 +1618,7 @@
      "mesh": "tower_top__shoulder_n",
      "cell": 0,
      "when": [
-      "n:wall_edge"
+      "n:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1321,7 +1627,7 @@
      "mesh": "tower_top__shoulder_e",
      "cell": 0,
      "when": [
-      "e:wall_edge"
+      "e:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1330,7 +1636,7 @@
      "mesh": "tower_top__shoulder_s",
      "cell": 0,
      "when": [
-      "s:wall_edge"
+      "s:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1339,7 +1645,7 @@
      "mesh": "tower_top__shoulder_w",
      "cell": 0,
      "when": [
-      "w:wall_edge"
+      "w:wall_edge|junction"
      ],
      "tris": 152
     },
@@ -1348,7 +1654,7 @@
      "mesh": "tower_top__link_n",
      "cell": 0,
      "when": [
-      "n:tower_side|parapet_side"
+      "n:tower_side|parapet_side|keep_side"
      ],
      "tris": 76
     },
@@ -1357,7 +1663,7 @@
      "mesh": "tower_top__link_e",
      "cell": 0,
      "when": [
-      "e:tower_side|parapet_side"
+      "e:tower_side|parapet_side|keep_side"
      ],
      "tris": 76
     },
@@ -1366,7 +1672,7 @@
      "mesh": "tower_top__link_s",
      "cell": 0,
      "when": [
-      "s:tower_side|parapet_side"
+      "s:tower_side|parapet_side|keep_side"
      ],
      "tris": 76
     },
@@ -1375,7 +1681,7 @@
      "mesh": "tower_top__link_w",
      "cell": 0,
      "when": [
-      "w:tower_side|parapet_side"
+      "w:tower_side|parapet_side|keep_side"
      ],
      "tris": 76
     },
@@ -1385,7 +1691,7 @@
      "cell": 0,
      "when": [
       "n:empty",
-      "n-:wall_edge|stairs_top|bridge_link"
+      "n-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1395,7 +1701,7 @@
      "cell": 0,
      "when": [
       "e:empty",
-      "e-:wall_edge|stairs_top|bridge_link"
+      "e-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1405,7 +1711,7 @@
      "cell": 0,
      "when": [
       "s:empty",
-      "s-:wall_edge|stairs_top|bridge_link"
+      "s-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     },
@@ -1415,7 +1721,7 @@
      "cell": 0,
      "when": [
       "w:empty",
-      "w-:wall_edge|stairs_top|bridge_link"
+      "w-:wall_edge|junction|stairs_top|bridge_link"
      ],
      "tris": 576
     }
@@ -1807,22 +2113,30 @@
      "n": "keep_side"
     },
     {
-     "u": "keep_top"
+     "u": "keep_top",
+     "w": "keep_side",
+     "s": "keep_side"
     },
     {
-     "u": "keep_top"
+     "u": "keep_top",
+     "e": "keep_side",
+     "s": "keep_side"
     },
     {
-     "u": "keep_top"
+     "u": "keep_top",
+     "w": "keep_side",
+     "n": "keep_side"
     },
     {
-     "u": "keep_top"
+     "u": "keep_top",
+     "e": "keep_side",
+     "n": "keep_side"
     }
    ],
    "sym": 4,
    "layer": "main",
    "gen": {
-    "w": 2.0,
+    "w": 0.7,
     "y": [
      0,
      2
@@ -1834,26 +2148,26 @@
    "aabb": [
     [
      -0.91,
-     0.3,
+     0.32,
      -0.91
     ],
     [
      2.91,
-     2.44,
+     4.0,
      2.91
     ]
    ],
-   "tris": 648,
+   "tris": 844,
    "solids": [
     [
      [
       1.0,
-      1.37,
+      2.16,
       1.0
      ],
      [
       1.91,
-      1.07,
+      1.84,
       1.91
      ]
     ]
@@ -1875,7 +2189,7 @@
      "when": [
       "d:!keep_top"
      ],
-     "tris": 592
+     "tris": 692
     },
     {
      "id": "sill",
@@ -1884,7 +2198,7 @@
      "when": [
       "d:keep_top"
      ],
-     "tris": 276
+     "tris": 244
     },
     {
      "id": "front",
@@ -1893,25 +2207,16 @@
      "when": [
       "d:keep_top"
      ],
-     "tris": 128
+     "tris": 204
     },
     {
-     "id": "roof",
-     "mesh": "keep__roof",
+     "id": "parapet",
+     "mesh": "keep__parapet",
      "cell": 4,
      "when": [
-      "u:!keep_base"
+      "u:empty"
      ],
-     "tris": 48
-    },
-    {
-     "id": "upper",
-     "mesh": "keep__upper",
-     "cell": 4,
-     "when": [
-      "u:keep_base"
-     ],
-     "tris": 564
+     "tris": 1288
     },
     {
      "id": "door_0w",
@@ -1920,7 +2225,7 @@
      "when": [
       "w:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_0s",
@@ -1929,7 +2234,7 @@
      "when": [
       "s:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_1e",
@@ -1938,7 +2243,7 @@
      "when": [
       "e:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_1s",
@@ -1947,7 +2252,7 @@
      "when": [
       "s:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_2w",
@@ -1956,7 +2261,7 @@
      "when": [
       "w:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_2n",
@@ -1965,7 +2270,7 @@
      "when": [
       "n:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_3e",
@@ -1974,7 +2279,7 @@
      "when": [
       "e:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
     },
     {
      "id": "door_3n",
@@ -1983,8 +2288,238 @@
      "when": [
       "n:stairs_top|bridge_link"
      ],
-     "tris": 560
+     "tris": 566
+    },
+    {
+     "id": "abut_0w",
+     "mesh": "keep__abut_0w",
+     "cell": 0,
+     "when": [
+      "w:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_0s",
+     "mesh": "keep__abut_0s",
+     "cell": 0,
+     "when": [
+      "s:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_1e",
+     "mesh": "keep__abut_1e",
+     "cell": 1,
+     "when": [
+      "e:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_1s",
+     "mesh": "keep__abut_1s",
+     "cell": 1,
+     "when": [
+      "s:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_2w",
+     "mesh": "keep__abut_2w",
+     "cell": 2,
+     "when": [
+      "w:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_2n",
+     "mesh": "keep__abut_2n",
+     "cell": 2,
+     "when": [
+      "n:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_3e",
+     "mesh": "keep__abut_3e",
+     "cell": 3,
+     "when": [
+      "e:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_3n",
+     "mesh": "keep__abut_3n",
+     "cell": 3,
+     "when": [
+      "n:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_4w",
+     "mesh": "keep__abut_4w",
+     "cell": 4,
+     "when": [
+      "w:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_4s",
+     "mesh": "keep__abut_4s",
+     "cell": 4,
+     "when": [
+      "s:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_5e",
+     "mesh": "keep__abut_5e",
+     "cell": 5,
+     "when": [
+      "e:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_5s",
+     "mesh": "keep__abut_5s",
+     "cell": 5,
+     "when": [
+      "s:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_6w",
+     "mesh": "keep__abut_6w",
+     "cell": 6,
+     "when": [
+      "w:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_6n",
+     "mesh": "keep__abut_6n",
+     "cell": 6,
+     "when": [
+      "n:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_7e",
+     "mesh": "keep__abut_7e",
+     "cell": 7,
+     "when": [
+      "e:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "abut_7n",
+     "mesh": "keep__abut_7n",
+     "cell": 7,
+     "when": [
+      "n:wall_edge|junction|turret_port|tower_side|parapet_side"
+     ],
+     "tris": 12
     }
+   ]
+  },
+  {
+   "id": "keep_roof",
+   "name": "Keep roof",
+   "category": "buildings",
+   "roles": [
+    "stone",
+    "roof",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1
+    ],
+    [
+     1,
+     0,
+     1
+    ]
+   ],
+   "faces": [
+    {
+     "d": "keep_roof_base"
+    },
+    {
+     "d": "keep_roof_base"
+    },
+    {
+     "d": "keep_roof_base"
+    },
+    {
+     "d": "keep_roof_base"
+    }
+   ],
+   "sym": 1,
+   "layer": "main",
+   "gen": {
+    "w": 10.0,
+    "y": [
+     2,
+     4
+    ],
+    "tags": [
+     "roof"
+    ]
+   },
+   "aabb": [
+    [
+     -0.9445,
+     0.0,
+     -0.9445
+    ],
+    [
+     2.9445,
+     2.0,
+     2.9445
+    ]
+   ],
+   "tris": 60,
+   "solids": [
+    [
+     [
+      1.0,
+      1.0,
+      1.0
+     ],
+     [
+      1.9445,
+      1.0,
+      1.9445
+     ]
+    ]
    ]
   },
   {
@@ -2055,7 +2590,7 @@
      "mesh": "stairs__landing_wall",
      "cell": 0,
      "when": [
-      "s:wall_side"
+      "s:wall_side|junction"
      ],
      "tris": 80
     },
@@ -2150,7 +2685,7 @@
      "mesh": "bridge__reach_e_wall",
      "cell": 0,
      "when": [
-      "e:wall_side"
+      "e:wall_side|junction"
      ],
      "tris": 124
     },
@@ -2177,7 +2712,7 @@
      "mesh": "bridge__reach_w_wall",
      "cell": 0,
      "when": [
-      "w:wall_side"
+      "w:wall_side|junction"
      ],
      "tris": 124
     },
@@ -2232,7 +2767,8 @@
      -1
     ],
     "tags": [
-     "ground"
+     "ground",
+     "scatter"
     ]
    },
    "aabb": [
@@ -2295,7 +2831,8 @@
     ],
     "tags": [
      "ground",
-     "path"
+     "path",
+     "scatter"
     ]
    },
    "aabb": [
@@ -2458,7 +2995,8 @@
     ],
     "tags": [
      "prop",
-     "ruin"
+     "ruin",
+     "scatter"
     ]
    },
    "aabb": [
@@ -2582,7 +3120,8 @@
      0
     ],
     "tags": [
-     "prop"
+     "prop",
+     "scatter"
     ]
    },
    "aabb": [

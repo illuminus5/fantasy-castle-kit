@@ -71,7 +71,9 @@ def main():
     out = KIT / "export"
     for category, obs in by_category.items():
         kit.export(out / f"{category}.glb", obs)
-    catalog = {"grid": {"cell": G.CELL, "level": G.LEVEL, "tile_top": G.TILE_TOP}, "sockets": G.SOCKETS, "pieces": entries}
+    # ids that older saves may hold, and the piece that replaced them
+    aliases = {"wall_corner": "wall_junction", "wall_t": "wall_junction"}
+    catalog = {"grid": {"cell": G.CELL, "level": G.LEVEL, "tile_top": G.TILE_TOP}, "sockets": G.SOCKETS, "aliases": aliases, "pieces": entries}
     (out / "catalog.json").write_text(json.dumps(catalog, indent=1), encoding="utf-8")
     print("catalog", len(entries), "pieces,", sum(e["tris"] for e in entries), "triangles")
 

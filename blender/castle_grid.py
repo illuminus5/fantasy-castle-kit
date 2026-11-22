@@ -46,28 +46,33 @@ SOCKETS = {
     "wall_top": {"air": True, "fits": ["wall_base"]},
     "wall_edge": {"air": False, "fits": ["wall_edge", "tower_side"]},  # a wall's end: it joins a wall or a tower
     "wall_side": {"air": True, "above": ["empty"]},  # a wall's flank: never against another wall's end or flank, nor a tower
+    # a junction's side: an arm grows toward a wall, tower, keep or turret there; stairs, bridges and gables meet it as a flank
+    "junction": {"air": True, "fits": ["wall_edge", "junction", "tower_side", "parapet_side", "keep_side", "turret_port"], "above": ["empty"]},
+    # the round turret's one joining side: a wall's end, a junction, or a wall's flank (as a buttress)
+    "turret_port": {"air": False, "fits": ["wall_edge", "wall_side", "junction"]},
     "turret_side": {"air": True},  # the round wall end's drum: nothing joins it
-    "gate_face": {"air": True},  # a gate's doors: kept clear of stairs
-    "ruin_side": {"air": True},  # a ruined wall or tower top: too low for a stair, a bridge or a joining wall
+    "gate_face": {"air": True, "align_as": "wall_side"},  # a gate's doors: kept clear of stairs
+    "ruin_side": {"air": True, "align_as": "wall_side"},  # a ruined wall or tower top: too low for a stair, a bridge or a joining wall
     "house_base": {"air": False, "aligned": True},
     "house_top": {"air": True, "fits": ["house_base"]},  # a second storey
-    "house_gable": {"air": True, "fits": ["house_gable", "wall_side", "tower_side"], "above": ["house_gable"]},  # gable to gable: a long house
+    "house_gable": {"air": True, "fits": ["house_gable", "wall_side", "junction", "tower_side"], "above": ["house_gable"]},  # gable to gable: a long house
     "keep_base": {"air": False, "aligned": True},
-    "keep_top": {"air": True, "fits": ["keep_base"]},
+    "keep_top": {"air": True, "fits": ["keep_base", "keep_roof_base"]},
+    "keep_roof_base": {"air": False},
     "tower_base": {"air": False},
     # air False: the generator always caps a tower (storey, top, roof or ruin). Players can still leave one bare,
     # because placement never checks empty neighbours.
     "tower_ring": {"air": False, "fits": ["tower_base", "roof"]},
     "tower_side": {"air": True, "fits": ["wall_edge", "tower_side"], "above": ["tower_side", "parapet_side"]},  # towers side by side grow a link
     "parapet_side": {"air": True, "fits": ["wall_edge", "tower_side", "parapet_side"]},  # a crenellated top: walls and towers join it, nothing lands on it
-    "stairs_top": {"air": False, "lands": True, "fits": ["wall_side", "tower_side", "keep_side", "house_gable"]},  # what stairs lean on
-    "keep_side": {"air": True},  # a keep's ground-floor walls (for stairs and bridges)
+    "stairs_top": {"air": False, "lands": True, "fits": ["wall_side", "junction", "tower_side", "keep_side", "house_gable"]},  # what stairs lean on
+    "keep_side": {"air": True, "fits": ["wall_edge", "junction", "turret_port", "tower_side", "parapet_side"], "above": ["keep_side", "empty"]},  # a keep's ground-floor walls (for stairs and bridges)
     "roof_seat": {"air": True, "fits": ["roof"]},  # a crenellated tower top takes a roof
     "roof": {"air": False},
     # A bridge is a one-cell walkway at wall-walk height: its ends join another segment or the side of a tower, wall,
     # keep or house, and hold it up ("carries": a joined face counts as support, not only a bottom). Its sides take
     # nothing; under it is air or the ground, never a wall top.
-    "bridge_link": {"air": False, "carries": True, "lands": True, "fits": ["bridge_link", "tower_side", "wall_side", "keep_side", "house_gable"]},
+    "bridge_link": {"air": False, "carries": True, "lands": True, "fits": ["bridge_link", "tower_side", "wall_side", "junction", "keep_side", "house_gable"]},
     "bridge_rail": {"air": True},
     "bridge_span": {"air": True},
 }

@@ -176,36 +176,50 @@ def wall_skins(name, x0, x1, z0, z1, row0, skip_front=None, skip_back=None, moss
     ]
 
 
-def wall_body(name, x0, x1, skip_front=None, skip_back=None, top=WALL_TOP):
-    """A curtain wall along X from x0 to x1: a mortar body with block skins on both faces, from one course up to the
-    walk, and four parts, so that a wall standing on a wall reads as one taller wall:
+def end_skin(name, x, facing, z0, z1):
+    """Block skin across a wall's end at x, facing +X (facing 1) or -X (-1): built across Y, then turned onto the end."""
+    return move(turn(skin_plane(name, -W2, W2, z0, z1, 0, -1, name), "z", 90 * facing), (x, 0, 0))
+
+
+def wall_body(name, x0, x1, skip_front=None, skip_back=None, top=WALL_TOP, ends="x0x1"):
+    """A curtain wall along X from x0 to x1: a mortar body with block skins on both faces and on the ends named in
+    ends, from one course up to the walk, and parts, so that a wall standing on a wall reads as one taller wall and a
+    stair or bridge can reach its walk:
       plinth  the footing course and its moss, on the ground          sole  the bottom course of body, on a wall
-      crown   coping and merlons (on a 2/3 m rhythm fixed to the grid, so runs from different pieces line up)
-      fill    the body and skins carried up to the next level, under a wall standing on this one."""
+      cap     the coping                                              fill  the body carried up under a wall on it
+      crown_n, crown_s  the merlon rows along each face (on a 2/3 m rhythm fixed to the grid, so runs line up)."""
     rng = random.Random(name)
     cx, hx = (x0 + x1) / 2, (x1 - x0) / 2
     above = math.ceil((top - COURSE) / COURSE - 1e-6)  # the courses from the plinth to the walk
     plinth = [(STONE, 0.9, box(name + "_plinth", (cx, 0, COURSE / 2), (hx, W2 + 0.07, COURSE / 2), bevel=0.05))]
     for i in range(2):
-        x = rng.uniform(x0 + 0.3, x1 - 0.3)
-        plinth.append((MOSS, box(f"{name}_moss{i}", (x, -(W2 + 0.07), COURSE + 0.01), (rng.uniform(0.12, 0.25), 0.03, 0.025), bevel=0.01)))
+        x = rng.uniform(x0 + 0.3, x1 - 0.3) if x1 - x0 > 0.6 else cx
+        plinth.append((MOSS, box(f"{name}_moss{i}", (x, -(W2 + 0.07), COURSE + 0.01), (rng.uniform(0.08, 0.2), 0.03, 0.025), bevel=0.01)))
     cap = moss_tops(tint(box(name + "_coping", (cx, 0, top + 0.06), (hx, W2 + 0.04, 0.06), bevel=0.02), STONE, 0.95), rng, 0.25)
-    crown = []
+    rows = {-1: [], 1: []}
     mw, mh = MERLON
     k = math.ceil((x0 + mw / 2) / CELL_THIRD - 1e-6)
     while k * CELL_THIRD + mw / 2 <= x1 + 1e-6:
         for side in (-1, 1):
             m = box(f"{name}_m{k}{side}", (k * CELL_THIRD, side * (W2 - 0.12), top + 0.12 + mh / 2), (mw / 2, 0.11, mh / 2), bevel=0.03)
-            crown.append(moss_tops(tint(m, STONE, rng.uniform(0.88, 1.0)), rng, 0.3))
+            rows[side].append(moss_tops(tint(m, STONE, rng.uniform(0.88, 1.0)), rng, 0.3))
         k += 1
-    return {
-        "base": build(*wall_skins(name, x0, x1, COURSE, top, 0, skip_front, skip_back, moss_low=0.4)),
+    base = wall_skins(name, x0, x1, COURSE, top, 0, skip_front, skip_back, moss_low=0.4)
+    if "x0" in ends:
+        base.append(end_skin(name + "_e0", x0, -1, COURSE, top))
+    if "x1" in ends:
+        base.append(end_skin(name + "_e1", x1, 1, COURSE, top))
+    look = {
+        "base": build(*base),
         "plinth": build(*plinth),
         "sole": build(*wall_skins(name + "_sole", x0, x1, 0.0, COURSE, 1)),
         "cap": cap,
-        "crown": build(*crown),
         "fill": build(*wall_skins(name + "_fill", x0, x1, top, G.LEVEL, above)),
     }
+    for side, key in ((-1, "crown_n"), (1, "crown_s")):  # n is Blender -Y
+        if rows[side]:
+            look[key] = build(*rows[side])
+    return look
 
 
 def arch_door(name, at_x, y, bottom, width, height, facing=-1):
@@ -232,24 +246,36 @@ def wall_straight():
     return wall_body("wall_straight", -H, H)
 
 
-def wall_corner():
-    """Arms to the east (+X) and to the front (n, Blender -Y). Asymmetric on purpose: it also checks the engine's
-    axis conversion (the arms must point where the catalog's e and n faces say)."""
-    east = wall_body("wall_corner", -W2, H)
-    front = turned(wall_body("wall_corner_n", W2, H), -90)
-    return merged(east, front)
-
-
-def wall_t():
-    run = wall_body("wall_t", -H, H)
-    arm = turned(wall_body("wall_t_n", W2, H), -90)
-    return merged(run, arm)
+def wall_junction():
+    """One piece for every way walls meet: a square post that grows an arm toward each side a wall, tower, keep or
+    turret meets it (parts arm_<f>), so it is a corner, a T, a cross or a wall's end as its neighbours say. The post
+    keeps a merlon on each side no arm leaves (and no stair or bridge lands on); on its own (the tray) it shows a
+    corner, arms east and north. Arms and post carry the stacking parts a wall has, so junctions stack as walls do."""
+    post = wall_body("wall_junction", -W2, W2)
+    look = {k: post[k] for k in ("base", "plinth", "sole", "cap", "fill")}
+    mw, mh = MERLON
+    rng = random.Random("wall_junction")
+    for f in "nesw":  # built on the north side (Blender -Y), turned to each
+        m = box(f"wall_junction_pm{f}", (0, -(W2 - 0.12), WALL_TOP + 0.12 + mh / 2), (mw / 2, 0.11, mh / 2), bevel=0.03)
+        look[f"post_crown_{f}"] = turn(moss_tops(tint(m, STONE, rng.uniform(0.88, 1.0)), rng, 0.3), "z", FROM_N[f])
+    for f in "nesw":
+        arm = turned(wall_body(f"wall_junction_{f}", W2, H, ends="x1"), FROM_E[f])
+        look[f"arm_{f}"] = arm["base"]
+        for k in ("plinth", "sole", "cap", "fill"):
+            look[f"arm_{f}_{k}"] = arm[k]
+        look[f"arm_{f}_crown"] = joined(arm["crown_n"], arm["crown_s"])
+    for f in "en":  # the tray's corner: whole arms, as on the ground with nothing on top
+        arm = turned(wall_body(f"wall_junction_t{f}", W2, H, ends="x1"), FROM_E[f])
+        look[f"tray_{f}"] = joined(arm["base"], arm["plinth"], arm["cap"], arm["crown_n"], arm["crown_s"])
+    return look
 
 
 def wall_end():
     """A wall from the west edge ending in a small round turret at the cell's centre: a plinth, a block-skinned
-    drum a little wider than the wall and, as its crown, a corbelled ring of merlons standing just above the wall's."""
-    run = wall_body("wall_end", -H, 0.0)
+    drum a little wider than the wall and, as its crown, a corbelled ring of merlons standing just above the wall's.
+    Its west side joins a wall's end, a junction, or a wall's flank: there part "reach" carries the stub on to the
+    wall's face, so the turret stands against it as a buttress."""
+    run = wall_body("wall_end", -H, 0.0, ends="x0")
     rng = random.Random("wall_end")
     tr = 0.56
     base = [
@@ -262,9 +288,11 @@ def wall_end():
             skin_ring("wall_end_sskin", tr, 0.0, COURSE, "wall_end_s", segments=12)]
     corbel = lathe("wall_end_corbel", [(tr - 0.05, G.LEVEL), (tr + 0.1, G.LEVEL + 0.1), (tr + 0.1, G.LEVEL + 0.16),
                                        (0, G.LEVEL + 0.16)], segments=12)
-    crown = [run["crown"], moss_tops(tint(corbel, STONE, 0.95), rng, 0.3)]
+    crown = [run["crown_n"], run["crown_s"], moss_tops(tint(corbel, STONE, 0.95), rng, 0.3)]
     crown += ring_of("wall_end_m", 6, tr - 0.02, G.LEVEL + 0.16, (0.14, 0.08, 0.13), rng)
-    return {"base": build(*base), "plinth": build(*plinth), "sole": build(*sole), "cap": run["cap"], "crown": build(*crown), "fill": run["fill"]}
+    reach = wall_body("wall_end_reach", -H - (H - W2) - 0.02, -H, ends="")
+    return {"base": build(*base), "plinth": build(*plinth), "sole": build(*sole), "cap": run["cap"], "crown": build(*crown), "fill": run["fill"],
+            "reach": joined(reach["base"], reach["plinth"], reach["cap"], *[reach[k] for k in ("crown_n", "crown_s") if k in reach])}
 
 
 def wall_window():
@@ -313,10 +341,10 @@ def gatehouse():
 def wall_gate():
     """A wall with an arched oak gate on both faces; between two towers it grows a gatehouse."""
     def skip(x, z):
-        return abs(x) < 0.62 and z < 1.55
+        return abs(x) < 0.52 and z < 1.38
     run = wall_body("wall_gate", -H, H, skip_front=skip, skip_back=skip)
-    front = arch_door("wall_gate_f", 0, -W2, 0.32, 0.86, 1.18, facing=-1)
-    back = arch_door("wall_gate_b", 0, W2, 0.32, 0.86, 1.18, facing=1)
+    front = arch_door("wall_gate_f", 0, -W2, 0.32, 0.7, 0.98, facing=-1)
+    back = arch_door("wall_gate_b", 0, W2, 0.32, 0.7, 0.98, facing=1)
     run["base"] = joined(run["base"], front, back)
     run["gatehouse"] = gatehouse()
     return run
@@ -388,15 +416,15 @@ def shoulder(name):
 def tower_door(name):
     """A doorway porch on the north side of a tower storey, opening onto the walk of the wall below beside it: a stone
     block standing out of the drum with an arched oak door, its threshold at the storey's floor, a sloped cap."""
-    y, hx, z0, z1 = R + 0.18, 0.38, -0.1, 1.62
+    y, hx, z0, z1 = R + 0.16, 0.3, -0.1, 1.18
     def door(x, z):
-        return abs(x) < 0.31 and z < 1.12
+        return abs(x) < 0.24 and z < 0.84
     cap = prism(name + "_cap", [(-hx - 0.05, z1), (hx + 0.05, z1), (hx + 0.05, z1 + 0.06), (0, z1 + 0.2), (-hx - 0.05, z1 + 0.06)],
                 -y - 0.06, -(R - 0.1), bevel=0.0)
     return build(
-        (STONE, 0.9, box(name + "_porch", (0, -(R + 0.04), (z0 + z1) / 2), (hx, 0.14, (z1 - z0) / 2), bevel=0.02)),
+        (STONE, 0.9, box(name + "_porch", (0, -(R + 0.03), (z0 + z1) / 2), (hx, 0.13, (z1 - z0) / 2), bevel=0.02)),
         skin_plane(name + "_f", -hx, hx, z0, z1, -y, -1, name + "f", skip=door),
-        arch_door(name + "_d", 0, -y, 0.0, 0.46, 1.05, facing=-1),
+        arch_door(name + "_d", 0, -y, 0.0, 0.34, 0.76, facing=-1),
         (STONE, 0.95, cap),
     )
 
@@ -431,22 +459,22 @@ def tower_joins(name, doors, link_top=G.LEVEL, plinth=False):
 
 def tower_base():
     def skip(x, y, z):
-        return near_angle(x, y, z, -90, 22, 0, 1.45) or any(near_angle(x, y, z, a, 9, 1.05, 1.65) for a in (0, 180, 90))
+        return near_angle(x, y, z, -90, 17, 0, 1.2) or any(near_angle(x, y, z, a, 9, 1.05, 1.65) for a in (0, 180, 90))
     parts = tower_body("tower_base", 0.32, 2.0, skip=skip, plinth=True)
-    parts.append(arch_door("tower_base_d", 0, -(R - 0.02), 0.32, 0.5, 1.0, facing=-1))
+    parts.append(arch_door("tower_base_d", 0, -(R - 0.02), 0.32, 0.38, 0.76, facing=-1))
     parts += slits("tower_base", (0, 180, 90), 1.35)
     return {"base": build(*parts), **tower_joins("tower_base", doors=False, plinth=True)}
 
 
 def tower_mid():
     def skip(x, y, z):
-        return any(near_angle(x, y, z, a, 16, 0.75, 1.55) for a in (-90, 90)) or any(near_angle(x, y, z, a, 9, 0.5, 1.1) for a in (0, 180))
+        return any(near_angle(x, y, z, a, 11, 0.85, 1.4) for a in (-90, 90)) or any(near_angle(x, y, z, a, 9, 0.5, 1.1) for a in (0, 180))
     parts = tower_body("tower_mid", 0.0, 2.0, skip=skip)
     for side, a in ((-1, -90), (1, 90)):
         y = side * (R + 0.012)
-        parts.append((WOOD, box(f"tower_mid_win{side}", (0, y, 1.05), (0.16, 0.02, 0.22), bevel=0.0)))
-        parts.append((WOOD, cyl(f"tower_mid_wintop{side}", (0, y, 1.27), 0.16, 0.04, axis="y", segments=8)))
-        parts.append((STONE, 1.0, box(f"tower_mid_sill{side}", (0, y + side * 0.02, 0.8), (0.22, 0.05, 0.04), bevel=0.01)))
+        parts.append((WOOD, box(f"tower_mid_win{side}", (0, y, 1.08), (0.11, 0.02, 0.16), bevel=0.0)))
+        parts.append((WOOD, cyl(f"tower_mid_wintop{side}", (0, y, 1.24), 0.11, 0.04, axis="y", segments=8)))
+        parts.append((STONE, 1.0, box(f"tower_mid_sill{side}", (0, y + side * 0.02, 0.9), (0.16, 0.05, 0.035), bevel=0.01)))
     parts += slits("tower_mid", (0, 180), 0.8)
     return {"base": build(*parts), **tower_joins("tower_mid", doors=True)}
 
@@ -592,12 +620,16 @@ def house():
 
 
 def keep():
-    """A 2x2-cell stone keep, two levels tall: block-skinned walls, corner pilasters, an arched gate, windows,
-    and a tiered hip roof. Footprint: Blender x -1..3, y -3..1 (catalog cells x 0..1, z 0..1). Areas: stone A,
-    roof B, timber C, iron D."""
+    """A 2x2-cell stone keep, two levels tall: block-skinned walls, corner pilasters, a string course between its
+    storeys, windows, and on top a walkway behind merlons, so it reads as a great square tower until a keep roof goes
+    on it or another keep stands on it. Parts: on the ground a plinth and the arched gate (on a keep: its walls carried
+    down and a windowed front); the parapet while nothing is on top; a doorway where a stair or bridge arrives; and an
+    abutment where a wall, turret or tower meets a side, filling the quarter metre between the keep's face and the
+    cell's edge. Footprint: Blender x -1..3, y -3..1 (catalog cells x 0..1, z 0..1, y 0..1).
+    Areas: stone A, roof B, timber C, iron D."""
     cx, cy, h = 1.0, -1.0, 1.75
-    top = 2.3  # leaves room under the two-level cap for a steep roof
-    full = 2 * G.LEVEL  # where a keep standing on this one begins
+    full = 2 * G.LEVEL
+    rng = random.Random("keep")
 
     def skins(name, z0, z1, sides, skip_front=None):
         out = []
@@ -613,67 +645,93 @@ def keep():
         return out
 
     def body(name, z0, z1, sides="nesw"):
-        out = [(A, MORTAR, box(name + "_body", (cx, cy, (z0 + z1) / 2), (h, h, (z1 - z0) / 2), bevel=0.02))]
+        out = [(A, MORTAR, box(name + "_body", (cx, cy, (z0 + z1) / 2), (h, h, (z1 - z0) / 2), bevel=0.0))]
         out += skins(name, z0, z1, sides)
         for dx in (-1, 1):
             for dy in (-1, 1):
-                out.append((A, 1.0, box(f"{name}_pilaster{dx}{dy}", (cx + dx * h, cy + dy * h, (z0 + z1) / 2), (0.16, 0.16, (z1 - z0) / 2 + 0.02), bevel=0.03)))
+                out.append((A, 1.0, box(f"{name}_pilaster{dx}{dy}", (cx + dx * h, cy + dy * h, (z0 + z1) / 2), (0.16, 0.16, (z1 - z0) / 2), bevel=0.03)))
         return out
 
     def windows(name, zs, sides):
         out = []
         for z in zs:
-            if "e" in sides: out.append((C, box(f"{name}_e{z}", (cx + h + 0.02, cy, z), (0.02, 0.16, 0.24), bevel=0.0)))
-            if "w" in sides: out.append((C, box(f"{name}_w{z}", (cx - h - 0.02, cy, z), (0.02, 0.16, 0.24), bevel=0.0)))
-            if "s" in sides: out.append((C, box(f"{name}_s{z}", (cx, cy + h + 0.02, z), (0.16, 0.02, 0.24), bevel=0.0)))
-            if "n" in sides: out.append((C, box(f"{name}_n{z}", (cx, cy - h - 0.02, z), (0.16, 0.02, 0.24), bevel=0.0)))
+            if "e" in sides: out.append((C, box(f"{name}_e{z}", (cx + h + 0.02, cy, z), (0.02, 0.12, 0.18), bevel=0.0)))
+            if "w" in sides: out.append((C, box(f"{name}_w{z}", (cx - h - 0.02, cy, z), (0.02, 0.12, 0.18), bevel=0.0)))
+            if "s" in sides: out.append((C, box(f"{name}_s{z}", (cx, cy + h + 0.02, z), (0.12, 0.02, 0.18), bevel=0.0)))
+            if "n" in sides: out.append((C, box(f"{name}_n{z}", (cx, cy - h - 0.02, z), (0.12, 0.02, 0.18), bevel=0.0)))
         return out
 
     def door_skip(x, z):
-        return abs(x - cx) < 0.62 and z < 1.75
+        return abs(x - cx) < 0.5 and z < 1.42
 
-    base = body("keep", 0.32, top, sides="esw")
-    base.append((A, 0.95, box("keep_cornice", (cx, cy, top + 0.06), (h + 0.12, h + 0.12, 0.08), bevel=0.02)))
-    base += windows("keep_win", (0.95, 1.8), "esw")
-    # a 4-segment lathe is a square pyramid turned 45 degrees; radius 2.75 gives a 1.95 m half-width (a small eave)
-    # rising into the 0.45 m the grid lets trim lean over the cell above, so the tiers stay steep (40-46 degrees)
-    roof = lathe("keep_roof", [(0, top + 0.12), (2.75, top + 0.12), (2.75, top + 0.22), (1.9, top + 0.85), (2.02, top + 0.85),
-                               (1.0, top + 1.5), (1.1, top + 1.5), (0, top + 2.08)], segments=4)
-    roof = move(turn(roof, "z", 45), (cx, cy, 0))
-    upper = body("keep_up", top + 0.14, full)
-    upper += windows("keep_upwin", (3.1,), "nesw")
+    base = body("keep", COURSE, full, sides="esw")
+    base.append((A, 0.95, box("keep_course", (cx, cy, G.LEVEL), (h + 0.05, h + 0.05, 0.05), bevel=0.01)))
+    base += windows("keep_win", (1.0, 2.9), "esw")
+
+    # the parapet: a lighter walkway floor, a corbelled cornice, merlons along every edge on the grid's 2/3 m rhythm
+    mw, mh = MERLON
+    parapet = [(A, 0.84, box("keep_floor", (cx, cy, full + 0.02), (h - 0.02, h - 0.02, 0.02), bevel=0.0)),
+               (A, 0.95, box("keep_cornice", (cx, cy, full - 0.04), (h + 0.1, h + 0.1, 0.06), bevel=0.02))]
+    spots = [k * CELL_THIRD for k in (-2, -1, 0, 1, 2)]
+    for f, deg in FROM_N.items():
+        for i, s in enumerate(spots + [h - 0.06, -(h - 0.06)]):
+            corner = abs(s) > h - 0.1
+            m = box(f"keep_m{f}{i}", (s, -(h - 0.02), full + 0.02 + mh / 2), (0.12 if corner else mw / 2, 0.1, mh / 2), bevel=0.03)
+            parapet.append(moss_tops(tint(move(turn(m, "z", deg), (cx, cy, 0)), A, rng.uniform(0.88, 1.0)), rng, 0.3))
 
     def door(name):
-        """A doorway built out of the wall where a stair's top or a bridge's deck arrives: a stone porch, an arched oak
-        door, and a small gabled cap that rises through the roof's eaves like a dormer. Built facing -Y at y = 0."""
-        hx, d, z0, z1 = 0.4, 0.3, DECK - 0.06, DECK + 0.8
+        """A doorway built out of the wall where a stair's top or a bridge's deck arrives: a stone porch with a small
+        gabled cap and an arched oak door. Built facing -Y at y = 0."""
+        hx, d, z0, z1 = 0.32, 0.26, DECK - 0.06, DECK + 0.66
         def skip(x, z):
-            return abs(x) < 0.31 and z < z0 + 0.8
-        cap = prism(name + "_cap", [(-hx - 0.06, z1), (hx + 0.06, z1), (0, z1 + 0.3)], -d - 0.06, 0.1, bevel=0.0)
+            return abs(x) < 0.25 and z < z0 + 0.66
+        cap = prism(name + "_cap", [(-hx - 0.05, z1), (hx + 0.05, z1), (0, z1 + 0.22)], -d - 0.05, 0.1, bevel=0.0)
         return build(
             (A, 0.92, box(name + "_porch", (0, (0.1 - d) / 2, (z0 + z1) / 2), (hx, (0.1 + d) / 2, (z1 - z0) / 2), bevel=0.02)),
             skin_plane(name + "_f", -hx, hx, z0, z1, -d, -1, name + "f", skip=skip),
-            arch_door(name + "_d", 0, -d, z0 + 0.02, 0.44, 0.72, facing=-1),
+            arch_door(name + "_d", 0, -d, z0 + 0.02, 0.34, 0.6, facing=-1),
             (B, cap),
         )
 
     # one per outer wall of each ground-floor cell: (cell, face, where on the wall, the turn from facing -Y)
-    keep_doors = {}
+    look = {}
     for i, f, at, deg in ((0, "w", (cx - h, 0), -90), (0, "s", (0, cy + h), 180), (1, "e", (cx + h, 0), 90), (1, "s", (2, cy + h), 180),
                           (2, "w", (cx - h, -2), -90), (2, "n", (0, cy - h), 0), (3, "e", (cx + h, -2), 90), (3, "n", (2, cy - h), 0)):
-        keep_doors[f"door_{i}{f}"] = move(turn(door(f"keep_door{i}{f}"), "z", deg), (at[0], at[1], 0))
+        look[f"door_{i}{f}"] = move(turn(door(f"keep_door{i}{f}"), "z", deg), (at[0], at[1], 0))
+
+    # abutments: (cell, its centre in Blender x and y, its level), on each of its outer faces
+    for i, (bx, by, lv) in enumerate(((0, 0, 0), (2, 0, 0), (0, -2, 0), (2, -2, 0), (0, 0, 1), (2, 0, 1), (0, -2, 1), (2, -2, 1))):
+        for f in ("w" if bx == 0 else "e") + ("s" if by == 0 else "n"):
+            z0, z1 = lv * G.LEVEL, (lv + 1) * G.LEVEL
+            if f in "ew":
+                x0, x1 = (cx + h, bx + H) if f == "e" else (bx - H, cx - h)
+                blk = box(f"keep_abut{i}{f}", ((x0 + x1) / 2, by, (z0 + z1) / 2), ((x1 - x0) / 2 + 0.02, 0.45, (z1 - z0) / 2), bevel=0.0)
+            else:
+                y0, y1 = (by - H, cy - h) if f == "n" else (cy + h, by + H)
+                blk = box(f"keep_abut{i}{f}", (bx, (y0 + y1) / 2, (z0 + z1) / 2), (0.45, (y1 - y0) / 2 + 0.02, (z1 - z0) / 2), bevel=0.0)
+            look[f"abut_{i}{f}"] = tint(blk, A, 0.9)
+
     return {
-        **keep_doors,
         "base": build(*base),
         # on the ground: plinth and the gate; on a keep: the walls carried down to the floor and a windowed front
         "plinth": build((A, 0.9, box("keep_plinth", (cx, cy, 0.16), (h + 0.08, h + 0.08, 0.16), bevel=0.05))),
-        "entrance": build(*skins("keep_f", 0.32, top, "n", skip_front=door_skip), arch_door("keep_d", cx, cy - h, 0.32, 0.9, 1.4, facing=-1)),
-        "sill": build(*body("keep_sill", 0.0, 0.32)),
-        "front": build(*skins("keep_f", 0.32, top, "n"), *windows("keep_fwin", (0.95, 1.8), "n")),
-        # on top: the roof, or the walls carried up to the keep standing on this one
-        "roof": tint(roof, B),
-        "upper": build(*upper),
+        "entrance": build(*skins("keep_f", COURSE, full, "n", skip_front=door_skip), arch_door("keep_d", cx, cy - h, COURSE, 0.7, 1.05, facing=-1),
+                          *windows("keep_fwin", (2.9,), "n")),
+        "sill": build(*body("keep_sill", 0.0, COURSE)),
+        "front": build(*skins("keep_f", COURSE, full, "n"), *windows("keep_fwin", (1.0, 2.9), "n")),
+        "parapet": build(*parapet),
+        **look,
     }
+
+
+def keep_roof():
+    """A tiered hip roof for a keep (2x2 cells, one level): set on a keep's top it caps the square tower. A 4-segment
+    lathe is a square pyramid turned 45 degrees; radius 2.75 gives a 1.95 m half-width, a small eave over the keep's
+    walls. Areas as the keep: stone A, roof B, timber C, iron D."""
+    cx, cy = 1.0, -1.0
+    roof = lathe("keep_roof", [(0, 0.04), (2.75, 0.04), (2.75, 0.14), (1.9, 0.77), (2.02, 0.77), (1.0, 1.42), (1.1, 1.42), (0, 2.0)], segments=4)
+    roof = move(turn(roof, "z", 45), (cx, cy, 0))
+    return build((B, roof), (A, 0.95, box("keep_roof_eave", (cx, cy, 0.03), (1.82, 1.82, 0.03), bevel=0.0)))
 
 
 def stairs():
@@ -889,46 +947,78 @@ WALL_FACES = {"d": "wall_base", "u": "wall_top", "e": "wall_edge", "w": "wall_ed
 TOWER_SIDES = {f: "tower_side" for f in "nesw"}
 ONE = [[0, 0, 0]]
 
-# a wall on a wall reads as one: the lower keeps no coping or merlons and carries its body up, the upper no plinth
-WALL_PARTS = {"plinth": ["d:!wall_top"], "sole": ["d:wall_top"], "cap": ["u:!wall_base"], "crown": ["u:empty"], "fill": ["u:wall_base"]}
-# a tower meets a wall's end with a shoulder and a tower beside it with a link; a storey over a wall's walk or a
-# stair's top gets a door onto it
-SHOULDERS = {f"shoulder_{f}": [f"{f}:wall_edge"] for f in "nesw"}
-LINKS = {f"link_{f}": [f"{f}:tower_side|parapet_side"] for f in "nesw"}
-DOORS = {f"door_{f}": [f"{f}:empty", f"{f}-:wall_edge|stairs_top|bridge_link"] for f in "nesw"}
+JOIN = "wall_edge|junction|tower_side|parapet_side|keep_side|turret_port"  # what a junction grows an arm toward
+LANDS = "stairs_top|bridge_link"  # what arrives at a wall walk from the side
+
+# a wall on a wall reads as one: the lower keeps no coping or merlons and carries its body up, the upper no plinth;
+# a merlon row steps aside where a stair or a bridge lands on that face
+WALL_PARTS = {"plinth": ["d:!wall_top"], "sole": ["d:wall_top"], "cap": ["u:!wall_base"], "fill": ["u:wall_base"],
+              "crown_n": ["u:empty", f"n:!{LANDS}"], "crown_s": ["u:empty", f"s:!{LANDS}"]}
+STACKING = {k: v for k, v in WALL_PARTS.items() if not k.startswith("crown")}
+# the junction: an arm toward each joining neighbour (with an arm's stacking parts), the post's merlons where none
+# leaves, and on its own (the tray) a corner
+JUNCTION_PARTS = {
+    **STACKING,
+    **{f"post_crown_{f}": ["u:empty", f"{f}:!{JOIN}|{LANDS}"] for f in "nesw"},
+    **{f"arm_{f}": [f"{f}:{JOIN}"] for f in "nesw"},
+    **{f"arm_{f}_{k}": [f"{f}:{JOIN}", *STACKING[k]] for f in "nesw" for k in ("plinth", "sole", "cap", "fill")},
+    **{f"arm_{f}_crown": [f"{f}:{JOIN}", "u:empty"] for f in "nesw"},
+    **{f"tray_{f}": [f"{g}:!{JOIN}" for g in "nesw"] for f in "en"},
+}
+# its shapes for the generator, which needs fixed sockets to keep runs whole: corner, T and cross
+JUNCTION_GEN = [
+    {"w": 1.0, "faces": [{"d": "wall_base", "u": "wall_top", "e": "wall_edge", "n": "wall_edge", "s": "wall_side", "w": "wall_side"}]},
+    {"w": 0.3, "faces": [{**WALL_FACES, "n": "wall_edge"}]},
+    {"w": 0.08, "faces": [{**WALL_FACES, "n": "wall_edge", "s": "wall_edge"}]},
+]
+TURRET_PARTS = {**STACKING, "crown": ["u:empty"], "reach": ["w:wall_side"]}
+# a tower meets a wall's end with a shoulder and a tower or keep beside it with a link; a storey over a wall's walk,
+# a stair's top or a bridge's deck gets a door onto it
+SHOULDERS = {f"shoulder_{f}": [f"{f}:wall_edge|junction"] for f in "nesw"}
+LINKS = {f"link_{f}": [f"{f}:tower_side|parapet_side|keep_side"] for f in "nesw"}
+DOORS = {f"door_{f}": [f"{f}:empty", f"{f}-:wall_edge|junction|{LANDS}"] for f in "nesw"}
 # a stair's landing reaches what it leans on
-STAIRS_PARTS = {"landing_wall": ["s:wall_side"], "landing_near": ["s:tower_side|house_gable"], "landing_keep": ["s:keep_side"]}
+STAIRS_PARTS = {"landing_wall": ["s:wall_side|junction"], "landing_near": ["s:tower_side|house_gable"], "landing_keep": ["s:keep_side"]}
 HOUSE_PARTS = {
     "footing": ["d:!house_top"], "jetty": ["d:house_top"],
     "roof": ["u:!house_base"], "upper": ["u:house_base"],
     **{f"link_{f}": [f"{f}:house_gable", "u:!house_base"] for f in "ew"},
     **{f"link_tall_{f}": [f"{f}:house_gable", "u:house_base"] for f in "ew"},
-    **{f"loft_{f}": [f"{f}:stairs_top|bridge_link", "u:!house_base"] for f in "ew"},
-    **{f"updoor_{f}": ["d:house_top", f"{f}-:stairs_top|bridge_link"] for f in "ew"},
+    **{f"loft_{f}": [f"{f}:{LANDS}", "u:!house_base"] for f in "ew"},
+    **{f"updoor_{f}": ["d:house_top", f"{f}-:{LANDS}"] for f in "ew"},
 }
 KEEP_TOP = 4  # the keep's cell [0, 1, 0]: its top level
+KEEP_JOIN = "wall_edge|junction|turret_port|tower_side|parapet_side"  # what meets a keep's side (an abutment fills the gap)
+KEEP_OUTER = ((0, "ws"), (1, "es"), (2, "wn"), (3, "en"), (4, "ws"), (5, "es"), (6, "wn"), (7, "en"))  # each cell's outer faces
+KEEP_FACES = [{("d" if i < 4 else "u"): ("keep_base" if i < 4 else "keep_top"), **{f: "keep_side" for f in fs}} for i, fs in KEEP_OUTER]
 KEEP_PARTS = {
     "plinth": ["d:!keep_top"], "entrance": ["d:!keep_top"], "sill": ["d:keep_top"], "front": ["d:keep_top"],
-    "roof": {"cell": KEEP_TOP, "when": ["u:!keep_base"]}, "upper": {"cell": KEEP_TOP, "when": ["u:keep_base"]},
-    # a doorway where a stair or a bridge arrives at a ground-floor wall
-    **{f"door_{i}{f}": {"cell": i, "when": [f"{f}:stairs_top|bridge_link"]} for i, f in ((0, "w"), (0, "s"), (1, "e"), (1, "s"), (2, "w"), (2, "n"), (3, "e"), (3, "n"))},
+    "parapet": {"cell": KEEP_TOP, "when": ["u:empty"]},
+    **{f"door_{i}{f}": {"cell": i, "when": [f"{f}:{LANDS}"]} for i, fs in KEEP_OUTER[:4] for f in fs},
+    **{f"abut_{i}{f}": {"cell": i, "when": [f"{f}:{KEEP_JOIN}"]} for i, fs in KEEP_OUTER for f in fs},
 }
+KEEP_CELLS = [[0, 0, 0], [1, 0, 0], [0, 0, 1], [1, 0, 1], [0, 1, 0], [1, 1, 0], [0, 1, 1], [1, 1, 1]]
 
 
-def piece(id, name, category, build, faces, sym, gen_w, gen_y, tags, roles=STONE_ROLES, cells=ONE, layer="main", flat=False, parts=None):
-    """flat: shade every face flat (big planar pieces whose shallow edges kit.shade would smooth into a dome)."""
+def piece(id, name, category, build, faces, sym, gen_w, gen_y, tags, roles=STONE_ROLES, cells=ONE, layer="main", flat=False, parts=None,
+          gen_faces=None):
+    """flat: shade every face flat (big planar pieces whose shallow edges kit.shade would smooth into a dome).
+    gen_faces: shapes a generator uses instead of faces ({"w": weight, "faces": [...]} each), for a piece whose look
+    adapts to its neighbours (the junction): faces stays permissive for placing by hand."""
     parts = {k: v if isinstance(v, dict) else {"when": v} for k, v in (parts or {}).items()}
-    return dict(id=id, name=name, category=category, roles=roles, cells=cells, faces=faces, sym=sym, layer=layer,
-                gen={"w": gen_w, "y": gen_y, "tags": tags}, build=build, flat=flat, parts=parts)
+    p = dict(id=id, name=name, category=category, roles=roles, cells=cells, faces=faces, sym=sym, layer=layer,
+             gen={"w": gen_w, "y": gen_y, "tags": tags}, build=build, flat=flat, parts=parts)
+    if gen_faces:
+        p["gen_faces"] = gen_faces
+    return p
 
 
 PIECES = [
     piece("wall_straight", "Wall", "walls", wall_straight, [WALL_FACES], 2, 3.0, [0, 1], ["wall"], parts=WALL_PARTS),
-    piece("wall_corner", "Wall corner", "walls", wall_corner, [{"d": "wall_base", "u": "wall_top", "e": "wall_edge", "n": "wall_edge", "s": "wall_side", "w": "wall_side"}],
-          4, 1.0, [0, 1], ["wall"], parts=WALL_PARTS),
-    piece("wall_t", "Wall junction", "walls", wall_t, [{**WALL_FACES, "n": "wall_edge"}], 4, 0.3, [0, 1], ["wall"], parts=WALL_PARTS),
-    piece("wall_end", "Wall end", "walls", wall_end, [{"d": "wall_base", "u": "wall_top", "w": "wall_edge", "n": "turret_side", "e": "turret_side", "s": "turret_side"}],
-          4, 0.6, [0, 1], ["wall"], parts=WALL_PARTS),
+    piece("wall_junction", "Wall junction", "walls", wall_junction, [{"d": "wall_base", "u": "wall_top", **{f: "junction" for f in "nesw"}}],
+          1, 1.0, [0, 1], ["wall"], parts=JUNCTION_PARTS, gen_faces=JUNCTION_GEN),
+    piece("wall_end", "Wall end", "walls", wall_end, [{"d": "wall_base", "u": "wall_top", "w": "turret_port", "n": "turret_side", "e": "turret_side", "s": "turret_side"}],
+          4, 0.6, [0, 1], ["wall"], parts=TURRET_PARTS),
     piece("wall_window", "Wall with windows", "walls", wall_window, [WALL_FACES], 2, 1.0, [0, 1], ["wall"], parts=WALL_PARTS),
     piece("wall_gate", "Gate", "walls", wall_gate, [{**WALL_FACES, "n": "gate_face", "s": "gate_face"}], 2, 0.4, [0, 0], ["wall"],
           parts={**WALL_PARTS, "gatehouse": ["e:tower_side", "w:tower_side", "u:empty"]}),
@@ -942,21 +1032,20 @@ PIECES = [
     piece("tower_broken", "Ruined tower top", "towers", tower_broken, [{"d": "tower_base", **{f: "ruin_side" for f in "nesw"}}], 1, 0.8, [1, 3], ["tower", "ruin"]),
     piece("house", "House", "buildings", house, [{"d": "house_base", "u": "house_top", "e": "house_gable", "w": "house_gable"}], 4, 1.5, [0, 2], ["house"],
           roles=["plaster", "roof", "timber", "stone"], parts=HOUSE_PARTS),
-    piece("keep", "Keep", "buildings", keep, [{"d": "keep_base", "w": "keep_side", "s": "keep_side"}, {"d": "keep_base", "e": "keep_side", "s": "keep_side"},
-                                          {"d": "keep_base", "w": "keep_side", "n": "keep_side"}, {"d": "keep_base", "e": "keep_side", "n": "keep_side"}]
-          + [{"u": "keep_top"}] * 4, 4, 2.0, [0, 2], ["house"],
-          roles=["stone", "roof", "timber", "iron"], flat=True, parts=KEEP_PARTS,
-          cells=[[0, 0, 0], [1, 0, 0], [0, 0, 1], [1, 0, 1], [0, 1, 0], [1, 1, 0], [0, 1, 1], [1, 1, 1]]),
+    piece("keep", "Keep", "buildings", keep, KEEP_FACES, 4, 0.7, [0, 2], ["house"],
+          roles=["stone", "roof", "timber", "iron"], flat=True, parts=KEEP_PARTS, cells=KEEP_CELLS),
+    piece("keep_roof", "Keep roof", "buildings", keep_roof, [{"d": "keep_roof_base"}] * 4, 1, 10.0, [2, 4], ["roof"],
+          roles=["stone", "roof", "timber", "iron"], flat=True, cells=KEEP_CELLS[:4]),
     piece("stairs", "Stairs", "buildings", stairs, [{"d": "base", "s": "stairs_top"}], 4, 0.4, [0, 0], ["prop"], parts=STAIRS_PARTS),
     piece("bridge", "Bridge", "buildings", bridge, [{"e": "bridge_link", "w": "bridge_link", "n": "bridge_rail", "s": "bridge_rail", "d": "bridge_span"}],
           2, 0.6, [0, 1], ["bridge"], roles=["timber", "moss", "stone", "iron"],
-          parts={f"reach_{f}_{k}": [f"{f}:{s}"] for f in "ew" for k, s in (("wall", "wall_side"), ("near", "tower_side|house_gable"), ("keep", "keep_side"))}),
-    piece("ground_grass", "Grass", "ground", ground_grass, [{"u": "ground"}], 1, 4.0, [-1, -1], ["ground"], roles=["grass", "path", "moss", "cloth"], layer="ground"),
-    piece("ground_path", "Path", "ground", ground_path, [{"u": "ground"}], 1, 1.0, [-1, -1], ["ground", "path"], roles=["path", "grass", "moss", "stone"], layer="ground",
+          parts={f"reach_{f}_{k}": [f"{f}:{s}"] for f in "ew" for k, s in (("wall", "wall_side|junction"), ("near", "tower_side|house_gable"), ("keep", "keep_side"))}),
+    piece("ground_grass", "Grass", "ground", ground_grass, [{"u": "ground"}], 1, 4.0, [-1, -1], ["ground", "scatter"], roles=["grass", "path", "moss", "cloth"], layer="ground"),
+    piece("ground_path", "Path", "ground", ground_path, [{"u": "ground"}], 1, 1.0, [-1, -1], ["ground", "path", "scatter"], roles=["path", "grass", "moss", "stone"], layer="ground",
           parts={f"edge_{f}": [f"{f}:!#path"] for f in "nesw"}),
     piece("well", "Well", "props", well, [{"d": "base"}], 4, 0.3, [0, 0], ["prop"], roles=["stone", "roof", "timber", "iron"]),
-    piece("rubble", "Rubble", "props", rubble, [{"d": "base"}], 4, 0.8, [0, 0], ["prop", "ruin"]),
+    piece("rubble", "Rubble", "props", rubble, [{"d": "base"}], 4, 0.8, [0, 0], ["prop", "ruin", "scatter"]),
     piece("banner", "Banner", "props", banner, [{"d": "base"}], 4, 0.3, [0, 0], ["prop"], roles=["timber", "cloth", "stone", "iron"]),
-    piece("tree", "Tree", "props", tree, [{"d": "base"}], 4, 1.2, [0, 0], ["prop"], roles=["leaves", "moss", "timber", "cloth"],
+    piece("tree", "Tree", "props", tree, [{"d": "base"}], 4, 1.2, [0, 0], ["prop", "scatter"], roles=["leaves", "moss", "timber", "cloth"],
           parts={k: [f"~{i}/4"] for i, k in enumerate(("oak", "pine", "poplar", "apple"))}),
 ]

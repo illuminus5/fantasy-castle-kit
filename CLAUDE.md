@@ -43,6 +43,10 @@ and formats.
   `<id>__<part>`, an engine merges the base with the parts whose conditions hold. Parts never change the socket
   rules. Each part's mesh is in piece space: build it on one side and turn it (`FROM_E`, `FROM_N`).
 - `~k/n` conditions pick by a hash of the cell (0 at the origin, so a tray or preview shows part k = 0).
+- The wall junction replaced wall_corner and wall_t (catalog `aliases` map them for old saves). Its placement faces are
+  all `junction`; the generator uses `gen_faces` (corner, T, cross) so runs stay whole. Its arms are join parts.
+- Keeps are two levels with a parapet; the roof is the separate keep_roof piece (keep_top fits keep_base and
+  keep_roof_base). Every keep cell's outer side is keep_side, or stacking fails the aligned check.
 - No near-black colours anywhere: on an additive display dark reads as see-through. `make.py` checks a luma floor.
 - Four tint areas: R, G, B = A, B, C; alpha 0 = D. Paint with `pieces.tint` / `build`, not `kit.paint` (3 areas only).
 - `kit.shade` smooths edges under 50 degrees, so shallow pyramids (the keep's roof) turn into domes: `flat=True`.

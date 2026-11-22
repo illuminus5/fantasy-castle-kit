@@ -12,11 +12,11 @@ Nothing in `export/` is tied to an engine: GLB meshes, a JSON catalog with the s
 
 | Category | Pieces | Triangles (base + join parts) | What is in it |
 |---|---|---|---|
-| walls | 7 | 4,824 + 2,988 | straight, corner, T, round-turret end, window, gate arch (gatehouse between towers), broken |
-| towers | 5 | 3,058 + 6,432 | base, storey, crenellated top, cone roof, broken top; shoulders, links and wall-walk doors |
-| buildings | 4 | 2,108 + 2,636 | timber house (storeys, long houses), 2x2x2 keep (stacks), stairs, bridge segment |
+| walls | 6 | 3,048 + 6,248 | straight, junction (a corner, T, cross or end, as its neighbours say), round-turret end (also a buttress on a wall's flank), window, gate (a gatehouse between towers), broken |
+| towers | 5 | 3,076 + 7,216 | base, storey, crenellated top, cone roof, broken top; shoulders, links and doors |
+| buildings | 5 | 2,336 + 9,384 | timber house (storeys, long houses), 2x2x2 keep (a crenellated square tower that stacks), keep roof, stairs, bridge segment |
 | ground | 2 | 148 + 384 | grass and path tiles (grassy path edges) |
-| props | 4 | 1,112 + more | well, rubble, banner, tree (oak, pine, poplar or apple, picked per cell) |
+| props | 4 | 1,004 + 722 | well, rubble, banner, tree (oak, pine, poplar or apple, picked per cell) |
 
 ![Every piece and a test castle](docs/pieces.jpg)
 *Every piece on its own, and a test castle showing the joins. Pink cubes mark the side faces that join.*
@@ -49,7 +49,11 @@ additive see-through display, where dark reads as transparent.
 - Both `land` at wall-walk height, so the face they meet says what must stand over it (`above`): a storey with a door
   (towers, houses) or nothing (a wall's open walk). A generator applies it once both cells are decided; it is what
   keeps bridges off roofs.
-- Each piece has `gen` hints for a generator: a weight, the levels it may stand on, and tags.
+- Each piece has `gen` hints for a generator: a weight, the levels it may stand on, and tags (`scatter`: turn it at random
+  wherever it lands). A piece whose look adapts to its neighbours lists fixed shapes for a generator in `gen_faces`
+  (the junction: corner, T, cross) while its `faces` stay permissive for building by hand.
+- `align_as`: a side that counts as another when stacking is checked (a gate's face as a wall's flank, so a wall stands
+  on a gate). `aliases`: old piece ids and what replaced them, for saves.
 
 ## Join parts
 
@@ -68,12 +72,15 @@ hold for one of the piece's cells. A condition reads the neighbour across a face
 Merge the base mesh with the parts that hold and draw it as one mesh; a piece only needs re-checking when a
 neighbour changes. The parts give:
 
-- towers: a shoulder where a wall meets them, a link to a tower beside them, a door onto a wall walk, stair or bridge;
-- walls: no merlons or plinth where a wall stands on a wall, so a stack reads as one taller wall;
+- towers: a shoulder where a wall meets them, a link to a tower or keep beside them, a door onto a wall walk, stair or
+  bridge;
+- walls: no merlons or plinth where a wall stands on a wall, so a stack reads as one taller wall; no merlons where a
+  stair or bridge lands; the junction's arms toward each joining neighbour; a turret's stub reaching a wall's flank;
 - a gatehouse over a gate between two towers;
 - houses: a footing or a jetty, the roof or the walls carried up to the next storey, one roof across houses gable
   to gable, doors where a stair or bridge arrives;
-- keeps: storeys that stack, and doorways where a stair or bridge arrives;
+- keeps: a parapet while nothing stands on them, doorways where a stair or bridge arrives, and an abutment where a wall,
+  turret or tower meets a side;
 - stairs and bridges: a landing or corbelled deck that reaches whatever they meet;
 - path tiles: grassy edges where no path continues;
 - trees: one of four species.
