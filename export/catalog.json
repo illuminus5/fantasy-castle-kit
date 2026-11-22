@@ -1,0 +1,2655 @@
+{
+ "grid": {
+  "cell": 2.0,
+  "level": 2.0,
+  "tile_top": 0.06
+ },
+ "sockets": {
+  "open": {
+   "air": true
+  },
+  "ground": {
+   "air": true,
+   "fits": [
+    "base",
+    "wall_base",
+    "tower_base",
+    "house_base",
+    "keep_base",
+    "bridge_span"
+   ]
+  },
+  "base": {
+   "air": false
+  },
+  "wall_base": {
+   "air": false,
+   "aligned": true
+  },
+  "wall_top": {
+   "air": true,
+   "fits": [
+    "wall_base"
+   ]
+  },
+  "wall_edge": {
+   "air": false,
+   "fits": [
+    "wall_edge",
+    "tower_side"
+   ]
+  },
+  "wall_side": {
+   "air": true,
+   "above": [
+    "empty"
+   ]
+  },
+  "turret_side": {
+   "air": true
+  },
+  "gate_face": {
+   "air": true
+  },
+  "ruin_side": {
+   "air": true
+  },
+  "house_base": {
+   "air": false,
+   "aligned": true
+  },
+  "house_top": {
+   "air": true,
+   "fits": [
+    "house_base"
+   ]
+  },
+  "house_gable": {
+   "air": true,
+   "fits": [
+    "house_gable",
+    "wall_side",
+    "tower_side"
+   ],
+   "above": [
+    "house_gable"
+   ]
+  },
+  "keep_base": {
+   "air": false,
+   "aligned": true
+  },
+  "keep_top": {
+   "air": true,
+   "fits": [
+    "keep_base"
+   ]
+  },
+  "tower_base": {
+   "air": false
+  },
+  "tower_ring": {
+   "air": false,
+   "fits": [
+    "tower_base",
+    "roof"
+   ]
+  },
+  "tower_side": {
+   "air": true,
+   "fits": [
+    "wall_edge",
+    "tower_side"
+   ],
+   "above": [
+    "tower_side",
+    "parapet_side"
+   ]
+  },
+  "parapet_side": {
+   "air": true,
+   "fits": [
+    "wall_edge",
+    "tower_side",
+    "parapet_side"
+   ]
+  },
+  "stairs_top": {
+   "air": false,
+   "lands": true,
+   "fits": [
+    "wall_side",
+    "tower_side",
+    "keep_side",
+    "house_gable"
+   ]
+  },
+  "keep_side": {
+   "air": true
+  },
+  "roof_seat": {
+   "air": true,
+   "fits": [
+    "roof"
+   ]
+  },
+  "roof": {
+   "air": false
+  },
+  "bridge_link": {
+   "air": false,
+   "carries": true,
+   "lands": true,
+   "fits": [
+    "bridge_link",
+    "tower_side",
+    "wall_side",
+    "keep_side",
+    "house_gable"
+   ]
+  },
+  "bridge_rail": {
+   "air": true
+  },
+  "bridge_span": {
+   "air": true
+  }
+ },
+ "pieces": [
+  {
+   "id": "wall_straight",
+   "name": "Wall",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "e": "wall_edge",
+     "w": "wall_edge",
+     "n": "wall_side",
+     "s": "wall_side"
+    }
+   ],
+   "sym": 2,
+   "layer": "main",
+   "gen": {
+    "w": 3.0,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     0.32,
+     -0.362
+    ],
+    [
+     1.0,
+     1.8,
+     0.362
+    ]
+   ],
+   "tris": 100,
+   "solids": [
+    [
+     [
+      0.0,
+      1.06,
+      0.0
+     ],
+     [
+      1.0,
+      0.74,
+      0.362
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_straight__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_straight__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 32
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_straight__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_straight__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_straight__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 32
+    }
+   ]
+  },
+  {
+   "id": "wall_corner",
+   "name": "Wall corner",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "e": "wall_edge",
+     "n": "wall_edge",
+     "s": "wall_side",
+     "w": "wall_side"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 1.0,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -0.362,
+     0.32,
+     -0.362
+    ],
+    [
+     1.0,
+     1.8,
+     1.0
+    ]
+   ],
+   "tris": 132,
+   "solids": [
+    [
+     [
+      0.319,
+      1.06,
+      0.319
+     ],
+     [
+      0.681,
+      0.74,
+      0.681
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_corner__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_corner__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 48
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_corner__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_corner__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_corner__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 48
+    }
+   ]
+  },
+  {
+   "id": "wall_t",
+   "name": "Wall junction",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "e": "wall_edge",
+     "w": "wall_edge",
+     "n": "wall_edge",
+     "s": "wall_side"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.3,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     0.32,
+     -0.362
+    ],
+    [
+     1.0,
+     1.8,
+     1.0
+    ]
+   ],
+   "tris": 152,
+   "solids": [
+    [
+     [
+      0.0,
+      1.06,
+      0.319
+     ],
+     [
+      1.0,
+      0.74,
+      0.681
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_t__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_t__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 52
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_t__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 88
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_t__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 352
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_t__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 52
+    }
+   ]
+  },
+  {
+   "id": "wall_end",
+   "name": "Wall end",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "w": "wall_edge",
+     "n": "turret_side",
+     "e": "turret_side",
+     "s": "turret_side"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.6,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     0.32,
+     -0.5719
+    ],
+    [
+     0.5719,
+     2.0,
+     0.5719
+    ]
+   ],
+   "tris": 252,
+   "solids": [
+    [
+     [
+      -0.2141,
+      1.16,
+      0.0
+     ],
+     [
+      0.7859,
+      0.84,
+      0.5719
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_end__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 204
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_end__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 96
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_end__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_end__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 412
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_end__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 24
+    }
+   ]
+  },
+  {
+   "id": "wall_window",
+   "name": "Wall with windows",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "e": "wall_edge",
+     "w": "wall_edge",
+     "n": "wall_side",
+     "s": "wall_side"
+    }
+   ],
+   "sym": 2,
+   "layer": "main",
+   "gen": {
+    "w": 1.0,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     0.32,
+     -0.412
+    ],
+    [
+     1.0,
+     1.8,
+     0.412
+    ]
+   ],
+   "tris": 660,
+   "solids": [
+    [
+     [
+      0.0,
+      1.06,
+      0.0
+     ],
+     [
+      1.0,
+      0.74,
+      0.412
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_window__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_window__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 32
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_window__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_window__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_window__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 32
+    }
+   ]
+  },
+  {
+   "id": "wall_gate",
+   "name": "Gate",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "u": "wall_top",
+     "e": "wall_edge",
+     "w": "wall_edge",
+     "n": "gate_face",
+     "s": "gate_face"
+    }
+   ],
+   "sym": 2,
+   "layer": "main",
+   "gen": {
+    "w": 0.4,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "wall"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     0.32,
+     -0.42
+    ],
+    [
+     1.0,
+     1.8,
+     0.42
+    ]
+   ],
+   "tris": 1076,
+   "solids": [
+    [
+     [
+      0.0,
+      1.06,
+      0.0
+     ],
+     [
+      1.0,
+      0.74,
+      0.42
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "wall_gate__plinth",
+     "cell": 0,
+     "when": [
+      "d:!wall_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "sole",
+     "mesh": "wall_gate__sole",
+     "cell": 0,
+     "when": [
+      "d:wall_top"
+     ],
+     "tris": 32
+    },
+    {
+     "id": "cap",
+     "mesh": "wall_gate__cap",
+     "cell": 0,
+     "when": [
+      "u:!wall_base"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "crown",
+     "mesh": "wall_gate__crown",
+     "cell": 0,
+     "when": [
+      "u:empty"
+     ],
+     "tris": 264
+    },
+    {
+     "id": "fill",
+     "mesh": "wall_gate__fill",
+     "cell": 0,
+     "when": [
+      "u:wall_base"
+     ],
+     "tris": 32
+    },
+    {
+     "id": "gatehouse",
+     "mesh": "wall_gate__gatehouse",
+     "cell": 0,
+     "when": [
+      "e:tower_side",
+      "w:tower_side",
+      "u:empty"
+     ],
+     "tris": 1072
+    }
+   ]
+  },
+  {
+   "id": "wall_broken",
+   "name": "Ruined wall",
+   "category": "walls",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "wall_base",
+     "e": "wall_edge",
+     "w": "wall_edge",
+     "n": "ruin_side",
+     "s": "ruin_side"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 1.5,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "wall",
+     "ruin"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     -0.0279,
+     -0.42
+    ],
+    [
+     1.0,
+     1.87,
+     0.9526
+    ]
+   ],
+   "tris": 716,
+   "solids": [
+    [
+     [
+      0.0,
+      0.9211,
+      0.2663
+     ],
+     [
+      1.0,
+      0.949,
+      0.6863
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tower_base",
+   "name": "Tower",
+   "category": "towers",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "tower_base",
+     "u": "tower_ring",
+     "n": "tower_side",
+     "e": "tower_side",
+     "s": "tower_side",
+     "w": "tower_side"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.8,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "tower"
+    ]
+   },
+   "aabb": [
+    [
+     -0.99,
+     0.0,
+     -0.99
+    ],
+    [
+     0.99,
+     2.0,
+     0.99
+    ]
+   ],
+   "tris": 910,
+   "solids": [
+    [
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.99,
+      1.0,
+      0.99
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "shoulder_n",
+     "mesh": "tower_base__shoulder_n",
+     "cell": 0,
+     "when": [
+      "n:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_e",
+     "mesh": "tower_base__shoulder_e",
+     "cell": 0,
+     "when": [
+      "e:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_s",
+     "mesh": "tower_base__shoulder_s",
+     "cell": 0,
+     "when": [
+      "s:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_w",
+     "mesh": "tower_base__shoulder_w",
+     "cell": 0,
+     "when": [
+      "w:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "link_n",
+     "mesh": "tower_base__link_n",
+     "cell": 0,
+     "when": [
+      "n:tower_side|parapet_side"
+     ],
+     "tris": 80
+    },
+    {
+     "id": "link_e",
+     "mesh": "tower_base__link_e",
+     "cell": 0,
+     "when": [
+      "e:tower_side|parapet_side"
+     ],
+     "tris": 80
+    },
+    {
+     "id": "link_s",
+     "mesh": "tower_base__link_s",
+     "cell": 0,
+     "when": [
+      "s:tower_side|parapet_side"
+     ],
+     "tris": 80
+    },
+    {
+     "id": "link_w",
+     "mesh": "tower_base__link_w",
+     "cell": 0,
+     "when": [
+      "w:tower_side|parapet_side"
+     ],
+     "tris": 80
+    }
+   ]
+  },
+  {
+   "id": "tower_mid",
+   "name": "Tower storey",
+   "category": "towers",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "tower_base",
+     "u": "tower_ring",
+     "n": "tower_side",
+     "e": "tower_side",
+     "s": "tower_side",
+     "w": "tower_side"
+    }
+   ],
+   "sym": 2,
+   "layer": "main",
+   "gen": {
+    "w": 0.8,
+    "y": [
+     1,
+     3
+    ],
+    "tags": [
+     "tower"
+    ]
+   },
+   "aabb": [
+    [
+     -0.96,
+     0.0,
+     -1.002
+    ],
+    [
+     0.96,
+     2.0,
+     1.002
+    ]
+   ],
+   "tris": 492,
+   "solids": [
+    [
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.96,
+      1.0,
+      1.002
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "shoulder_n",
+     "mesh": "tower_mid__shoulder_n",
+     "cell": 0,
+     "when": [
+      "n:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_e",
+     "mesh": "tower_mid__shoulder_e",
+     "cell": 0,
+     "when": [
+      "e:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_s",
+     "mesh": "tower_mid__shoulder_s",
+     "cell": 0,
+     "when": [
+      "s:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_w",
+     "mesh": "tower_mid__shoulder_w",
+     "cell": 0,
+     "when": [
+      "w:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "link_n",
+     "mesh": "tower_mid__link_n",
+     "cell": 0,
+     "when": [
+      "n:tower_side|parapet_side"
+     ],
+     "tris": 40
+    },
+    {
+     "id": "link_e",
+     "mesh": "tower_mid__link_e",
+     "cell": 0,
+     "when": [
+      "e:tower_side|parapet_side"
+     ],
+     "tris": 40
+    },
+    {
+     "id": "link_s",
+     "mesh": "tower_mid__link_s",
+     "cell": 0,
+     "when": [
+      "s:tower_side|parapet_side"
+     ],
+     "tris": 40
+    },
+    {
+     "id": "link_w",
+     "mesh": "tower_mid__link_w",
+     "cell": 0,
+     "when": [
+      "w:tower_side|parapet_side"
+     ],
+     "tris": 40
+    },
+    {
+     "id": "door_n",
+     "mesh": "tower_mid__door_n",
+     "cell": 0,
+     "when": [
+      "n:empty",
+      "n-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_e",
+     "mesh": "tower_mid__door_e",
+     "cell": 0,
+     "when": [
+      "e:empty",
+      "e-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_s",
+     "mesh": "tower_mid__door_s",
+     "cell": 0,
+     "when": [
+      "s:empty",
+      "s-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_w",
+     "mesh": "tower_mid__door_w",
+     "cell": 0,
+     "when": [
+      "w:empty",
+      "w-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    }
+   ]
+  },
+  {
+   "id": "tower_top",
+   "name": "Tower top",
+   "category": "towers",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "tower_base",
+     "u": "roof_seat",
+     "n": "parapet_side",
+     "e": "parapet_side",
+     "s": "parapet_side",
+     "w": "parapet_side"
+    }
+   ],
+   "sym": 1,
+   "layer": "main",
+   "gen": {
+    "w": 0.8,
+    "y": [
+     1,
+     4
+    ],
+    "tags": [
+     "tower"
+    ]
+   },
+   "aabb": [
+    [
+     -1.02,
+     0.0,
+     -1.02
+    ],
+    [
+     1.02,
+     1.9,
+     1.02
+    ]
+   ],
+   "tris": 656,
+   "solids": [
+    [
+     [
+      0.0,
+      0.95,
+      0.0
+     ],
+     [
+      1.02,
+      0.95,
+      1.02
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "shoulder_n",
+     "mesh": "tower_top__shoulder_n",
+     "cell": 0,
+     "when": [
+      "n:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_e",
+     "mesh": "tower_top__shoulder_e",
+     "cell": 0,
+     "when": [
+      "e:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_s",
+     "mesh": "tower_top__shoulder_s",
+     "cell": 0,
+     "when": [
+      "s:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "shoulder_w",
+     "mesh": "tower_top__shoulder_w",
+     "cell": 0,
+     "when": [
+      "w:wall_edge"
+     ],
+     "tris": 152
+    },
+    {
+     "id": "link_n",
+     "mesh": "tower_top__link_n",
+     "cell": 0,
+     "when": [
+      "n:tower_side|parapet_side"
+     ],
+     "tris": 76
+    },
+    {
+     "id": "link_e",
+     "mesh": "tower_top__link_e",
+     "cell": 0,
+     "when": [
+      "e:tower_side|parapet_side"
+     ],
+     "tris": 76
+    },
+    {
+     "id": "link_s",
+     "mesh": "tower_top__link_s",
+     "cell": 0,
+     "when": [
+      "s:tower_side|parapet_side"
+     ],
+     "tris": 76
+    },
+    {
+     "id": "link_w",
+     "mesh": "tower_top__link_w",
+     "cell": 0,
+     "when": [
+      "w:tower_side|parapet_side"
+     ],
+     "tris": 76
+    },
+    {
+     "id": "door_n",
+     "mesh": "tower_top__door_n",
+     "cell": 0,
+     "when": [
+      "n:empty",
+      "n-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_e",
+     "mesh": "tower_top__door_e",
+     "cell": 0,
+     "when": [
+      "e:empty",
+      "e-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_s",
+     "mesh": "tower_top__door_s",
+     "cell": 0,
+     "when": [
+      "s:empty",
+      "s-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    },
+    {
+     "id": "door_w",
+     "mesh": "tower_top__door_w",
+     "cell": 0,
+     "when": [
+      "w:empty",
+      "w-:wall_edge|stairs_top|bridge_link"
+     ],
+     "tris": 576
+    }
+   ]
+  },
+  {
+   "id": "tower_roof",
+   "name": "Cone roof",
+   "category": "towers",
+   "roles": [
+    "roof",
+    "timber",
+    "cloth",
+    "roof"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "roof"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 1.0,
+    "y": [
+     1,
+     5
+    ],
+    "tags": [
+     "roof"
+    ]
+   },
+   "aabb": [
+    [
+     -1.08,
+     0.0,
+     -1.08
+    ],
+    [
+     1.08,
+     2.3,
+     1.08
+    ]
+   ],
+   "tris": 220,
+   "solids": [
+    [
+     [
+      0.0,
+      1.15,
+      0.0
+     ],
+     [
+      1.08,
+      1.15,
+      1.08
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tower_broken",
+   "name": "Ruined tower top",
+   "category": "towers",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "tower_base",
+     "n": "ruin_side",
+     "e": "ruin_side",
+     "s": "ruin_side",
+     "w": "ruin_side"
+    }
+   ],
+   "sym": 1,
+   "layer": "main",
+   "gen": {
+    "w": 0.8,
+    "y": [
+     1,
+     3
+    ],
+    "tags": [
+     "tower",
+     "ruin"
+    ]
+   },
+   "aabb": [
+    [
+     -0.9684,
+     0.0,
+     -0.95
+    ],
+    [
+     0.9684,
+     1.7,
+     0.95
+    ]
+   ],
+   "tris": 780,
+   "solids": [
+    [
+     [
+      0.0,
+      0.85,
+      0.0
+     ],
+     [
+      0.9684,
+      0.85,
+      0.95
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "house",
+   "name": "House",
+   "category": "buildings",
+   "roles": [
+    "plaster",
+    "roof",
+    "timber",
+    "stone"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "house_base",
+     "u": "house_top",
+     "e": "house_gable",
+     "w": "house_gable"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 1.5,
+    "y": [
+     0,
+     2
+    ],
+    "tags": [
+     "house"
+    ]
+   },
+   "aabb": [
+    [
+     -0.98,
+     0.28,
+     -0.72
+    ],
+    [
+     0.98,
+     1.52,
+     0.72
+    ]
+   ],
+   "tris": 692,
+   "solids": [
+    [
+     [
+      0.0,
+      0.9,
+      0.0
+     ],
+     [
+      0.98,
+      0.62,
+      0.72
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "footing",
+     "mesh": "house__footing",
+     "cell": 0,
+     "when": [
+      "d:!house_top"
+     ],
+     "tris": 132
+    },
+    {
+     "id": "jetty",
+     "mesh": "house__jetty",
+     "cell": 0,
+     "when": [
+      "d:house_top"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "roof",
+     "mesh": "house__roof",
+     "cell": 0,
+     "when": [
+      "u:!house_base"
+     ],
+     "tris": 60
+    },
+    {
+     "id": "upper",
+     "mesh": "house__upper",
+     "cell": 0,
+     "when": [
+      "u:house_base"
+     ],
+     "tris": 692
+    },
+    {
+     "id": "link_e",
+     "mesh": "house__link_e",
+     "cell": 0,
+     "when": [
+      "e:house_gable",
+      "u:!house_base"
+     ],
+     "tris": 16
+    },
+    {
+     "id": "link_w",
+     "mesh": "house__link_w",
+     "cell": 0,
+     "when": [
+      "w:house_gable",
+      "u:!house_base"
+     ],
+     "tris": 16
+    },
+    {
+     "id": "link_tall_e",
+     "mesh": "house__link_tall_e",
+     "cell": 0,
+     "when": [
+      "e:house_gable",
+      "u:house_base"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "link_tall_w",
+     "mesh": "house__link_tall_w",
+     "cell": 0,
+     "when": [
+      "w:house_gable",
+      "u:house_base"
+     ],
+     "tris": 12
+    },
+    {
+     "id": "loft_e",
+     "mesh": "house__loft_e",
+     "cell": 0,
+     "when": [
+      "e:stairs_top|bridge_link",
+      "u:!house_base"
+     ],
+     "tris": 56
+    },
+    {
+     "id": "loft_w",
+     "mesh": "house__loft_w",
+     "cell": 0,
+     "when": [
+      "w:stairs_top|bridge_link",
+      "u:!house_base"
+     ],
+     "tris": 56
+    },
+    {
+     "id": "updoor_e",
+     "mesh": "house__updoor_e",
+     "cell": 0,
+     "when": [
+      "d:house_top",
+      "e-:stairs_top|bridge_link"
+     ],
+     "tris": 56
+    },
+    {
+     "id": "updoor_w",
+     "mesh": "house__updoor_w",
+     "cell": 0,
+     "when": [
+      "d:house_top",
+      "w-:stairs_top|bridge_link"
+     ],
+     "tris": 56
+    }
+   ]
+  },
+  {
+   "id": "keep",
+   "name": "Keep",
+   "category": "buildings",
+   "roles": [
+    "stone",
+    "roof",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1
+    ],
+    [
+     1,
+     0,
+     1
+    ],
+    [
+     0,
+     1,
+     0
+    ],
+    [
+     1,
+     1,
+     0
+    ],
+    [
+     0,
+     1,
+     1
+    ],
+    [
+     1,
+     1,
+     1
+    ]
+   ],
+   "faces": [
+    {
+     "d": "keep_base",
+     "w": "keep_side",
+     "s": "keep_side"
+    },
+    {
+     "d": "keep_base",
+     "e": "keep_side",
+     "s": "keep_side"
+    },
+    {
+     "d": "keep_base",
+     "w": "keep_side",
+     "n": "keep_side"
+    },
+    {
+     "d": "keep_base",
+     "e": "keep_side",
+     "n": "keep_side"
+    },
+    {
+     "u": "keep_top"
+    },
+    {
+     "u": "keep_top"
+    },
+    {
+     "u": "keep_top"
+    },
+    {
+     "u": "keep_top"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 2.0,
+    "y": [
+     0,
+     2
+    ],
+    "tags": [
+     "house"
+    ]
+   },
+   "aabb": [
+    [
+     -0.91,
+     0.3,
+     -0.91
+    ],
+    [
+     2.91,
+     2.44,
+     2.91
+    ]
+   ],
+   "tris": 648,
+   "solids": [
+    [
+     [
+      1.0,
+      1.37,
+      1.0
+     ],
+     [
+      1.91,
+      1.07,
+      1.91
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "plinth",
+     "mesh": "keep__plinth",
+     "cell": 0,
+     "when": [
+      "d:!keep_top"
+     ],
+     "tris": 44
+    },
+    {
+     "id": "entrance",
+     "mesh": "keep__entrance",
+     "cell": 0,
+     "when": [
+      "d:!keep_top"
+     ],
+     "tris": 592
+    },
+    {
+     "id": "sill",
+     "mesh": "keep__sill",
+     "cell": 0,
+     "when": [
+      "d:keep_top"
+     ],
+     "tris": 276
+    },
+    {
+     "id": "front",
+     "mesh": "keep__front",
+     "cell": 0,
+     "when": [
+      "d:keep_top"
+     ],
+     "tris": 128
+    },
+    {
+     "id": "roof",
+     "mesh": "keep__roof",
+     "cell": 4,
+     "when": [
+      "u:!keep_base"
+     ],
+     "tris": 48
+    },
+    {
+     "id": "upper",
+     "mesh": "keep__upper",
+     "cell": 4,
+     "when": [
+      "u:keep_base"
+     ],
+     "tris": 564
+    },
+    {
+     "id": "door_0w",
+     "mesh": "keep__door_0w",
+     "cell": 0,
+     "when": [
+      "w:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_0s",
+     "mesh": "keep__door_0s",
+     "cell": 0,
+     "when": [
+      "s:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_1e",
+     "mesh": "keep__door_1e",
+     "cell": 1,
+     "when": [
+      "e:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_1s",
+     "mesh": "keep__door_1s",
+     "cell": 1,
+     "when": [
+      "s:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_2w",
+     "mesh": "keep__door_2w",
+     "cell": 2,
+     "when": [
+      "w:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_2n",
+     "mesh": "keep__door_2n",
+     "cell": 2,
+     "when": [
+      "n:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_3e",
+     "mesh": "keep__door_3e",
+     "cell": 3,
+     "when": [
+      "e:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    },
+    {
+     "id": "door_3n",
+     "mesh": "keep__door_3n",
+     "cell": 3,
+     "when": [
+      "n:stairs_top|bridge_link"
+     ],
+     "tris": 560
+    }
+   ]
+  },
+  {
+   "id": "stairs",
+   "name": "Stairs",
+   "category": "buildings",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "base",
+     "s": "stairs_top"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.4,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "prop"
+    ]
+   },
+   "aabb": [
+    [
+     -0.345,
+     0.0,
+     -1.01
+    ],
+    [
+     0.345,
+     1.83,
+     0.812
+    ]
+   ],
+   "tris": 444,
+   "solids": [
+    [
+     [
+      0.0,
+      0.915,
+      -0.099
+     ],
+     [
+      0.345,
+      0.915,
+      0.911
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "landing_wall",
+     "mesh": "stairs__landing_wall",
+     "cell": 0,
+     "when": [
+      "s:wall_side"
+     ],
+     "tris": 80
+    },
+    {
+     "id": "landing_near",
+     "mesh": "stairs__landing_near",
+     "cell": 0,
+     "when": [
+      "s:tower_side|house_gable"
+     ],
+     "tris": 80
+    },
+    {
+     "id": "landing_keep",
+     "mesh": "stairs__landing_keep",
+     "cell": 0,
+     "when": [
+      "s:keep_side"
+     ],
+     "tris": 80
+    }
+   ]
+  },
+  {
+   "id": "bridge",
+   "name": "Bridge",
+   "category": "buildings",
+   "roles": [
+    "timber",
+    "moss",
+    "stone",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "e": "bridge_link",
+     "w": "bridge_link",
+     "n": "bridge_rail",
+     "s": "bridge_rail",
+     "d": "bridge_span"
+    }
+   ],
+   "sym": 2,
+   "layer": "main",
+   "gen": {
+    "w": 0.6,
+    "y": [
+     0,
+     1
+    ],
+    "tags": [
+     "bridge"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     1.66,
+     -0.57
+    ],
+    [
+     1.0,
+     2.78,
+     0.57
+    ]
+   ],
+   "tris": 296,
+   "solids": [
+    [
+     [
+      0.0,
+      2.22,
+      0.0
+     ],
+     [
+      1.0,
+      0.56,
+      0.57
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "reach_e_wall",
+     "mesh": "bridge__reach_e_wall",
+     "cell": 0,
+     "when": [
+      "e:wall_side"
+     ],
+     "tris": 124
+    },
+    {
+     "id": "reach_e_near",
+     "mesh": "bridge__reach_e_near",
+     "cell": 0,
+     "when": [
+      "e:tower_side|house_gable"
+     ],
+     "tris": 124
+    },
+    {
+     "id": "reach_e_keep",
+     "mesh": "bridge__reach_e_keep",
+     "cell": 0,
+     "when": [
+      "e:keep_side"
+     ],
+     "tris": 124
+    },
+    {
+     "id": "reach_w_wall",
+     "mesh": "bridge__reach_w_wall",
+     "cell": 0,
+     "when": [
+      "w:wall_side"
+     ],
+     "tris": 124
+    },
+    {
+     "id": "reach_w_near",
+     "mesh": "bridge__reach_w_near",
+     "cell": 0,
+     "when": [
+      "w:tower_side|house_gable"
+     ],
+     "tris": 124
+    },
+    {
+     "id": "reach_w_keep",
+     "mesh": "bridge__reach_w_keep",
+     "cell": 0,
+     "when": [
+      "w:keep_side"
+     ],
+     "tris": 124
+    }
+   ]
+  },
+  {
+   "id": "ground_grass",
+   "name": "Grass",
+   "category": "ground",
+   "roles": [
+    "grass",
+    "path",
+    "moss",
+    "cloth"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "u": "ground"
+    }
+   ],
+   "sym": 1,
+   "layer": "ground",
+   "gen": {
+    "w": 4.0,
+    "y": [
+     -1,
+     -1
+    ],
+    "tags": [
+     "ground"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     -0.12,
+     -1.0
+    ],
+    [
+     1.0,
+     0.18,
+     1.0
+    ]
+   ],
+   "tris": 104,
+   "solids": [
+    [
+     [
+      0.0,
+      0.03,
+      0.0
+     ],
+     [
+      1.0,
+      0.15,
+      1.0
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "ground_path",
+   "name": "Path",
+   "category": "ground",
+   "roles": [
+    "path",
+    "grass",
+    "moss",
+    "stone"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "u": "ground"
+    }
+   ],
+   "sym": 1,
+   "layer": "ground",
+   "gen": {
+    "w": 1.0,
+    "y": [
+     -1,
+     -1
+    ],
+    "tags": [
+     "ground",
+     "path"
+    ]
+   },
+   "aabb": [
+    [
+     -1.0,
+     -0.12,
+     -1.0
+    ],
+    [
+     1.0,
+     0.068,
+     1.0
+    ]
+   ],
+   "tris": 44,
+   "solids": [
+    [
+     [
+      0.0,
+      -0.026,
+      0.0
+     ],
+     [
+      1.0,
+      0.094,
+      1.0
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "edge_n",
+     "mesh": "ground_path__edge_n",
+     "cell": 0,
+     "when": [
+      "n:!#path"
+     ],
+     "tris": 96
+    },
+    {
+     "id": "edge_e",
+     "mesh": "ground_path__edge_e",
+     "cell": 0,
+     "when": [
+      "e:!#path"
+     ],
+     "tris": 96
+    },
+    {
+     "id": "edge_s",
+     "mesh": "ground_path__edge_s",
+     "cell": 0,
+     "when": [
+      "s:!#path"
+     ],
+     "tris": 96
+    },
+    {
+     "id": "edge_w",
+     "mesh": "ground_path__edge_w",
+     "cell": 0,
+     "when": [
+      "w:!#path"
+     ],
+     "tris": 96
+    }
+   ]
+  },
+  {
+   "id": "well",
+   "name": "Well",
+   "category": "props",
+   "roles": [
+    "stone",
+    "roof",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "base"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.3,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "prop"
+    ]
+   },
+   "aabb": [
+    [
+     -0.62,
+     0.02,
+     -0.56
+    ],
+    [
+     0.62,
+     1.85,
+     0.56
+    ]
+   ],
+   "tris": 420,
+   "solids": [
+    [
+     [
+      0.0,
+      0.935,
+      0.0
+     ],
+     [
+      0.62,
+      0.915,
+      0.56
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "rubble",
+   "name": "Rubble",
+   "category": "props",
+   "roles": [
+    "stone",
+    "moss",
+    "timber",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "base"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.8,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "prop",
+     "ruin"
+    ]
+   },
+   "aabb": [
+    [
+     -0.4736,
+     -0.0625,
+     -0.6037
+    ],
+    [
+     0.8602,
+     0.5634,
+     0.8508
+    ]
+   ],
+   "tris": 396,
+   "solids": [
+    [
+     [
+      0.1933,
+      0.2505,
+      0.1235
+     ],
+     [
+      0.6669,
+      0.313,
+      0.7272
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "banner",
+   "name": "Banner",
+   "category": "props",
+   "roles": [
+    "timber",
+    "cloth",
+    "stone",
+    "iron"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "base"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 0.3,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "prop"
+    ]
+   },
+   "aabb": [
+    [
+     -0.22,
+     0.0,
+     -0.22
+    ],
+    [
+     0.55,
+     2.32,
+     0.22
+    ]
+   ],
+   "tris": 128,
+   "solids": [
+    [
+     [
+      0.165,
+      1.16,
+      0.0
+     ],
+     [
+      0.385,
+      1.16,
+      0.22
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tree",
+   "name": "Tree",
+   "category": "props",
+   "roles": [
+    "leaves",
+    "moss",
+    "timber",
+    "cloth"
+   ],
+   "cells": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "faces": [
+    {
+     "d": "base"
+    }
+   ],
+   "sym": 4,
+   "layer": "main",
+   "gen": {
+    "w": 1.2,
+    "y": [
+     0,
+     0
+    ],
+    "tags": [
+     "prop"
+    ]
+   },
+   "aabb": [
+    [
+     -0.237,
+     0.0,
+     -0.3182
+    ],
+    [
+     0.1089,
+     0.06,
+     0.2772
+    ]
+   ],
+   "tris": 60,
+   "solids": [
+    [
+     [
+      -0.064,
+      0.03,
+      -0.0205
+     ],
+     [
+      0.1729,
+      0.03,
+      0.2977
+     ]
+    ]
+   ],
+   "parts": [
+    {
+     "id": "oak",
+     "mesh": "tree__oak",
+     "cell": 0,
+     "when": [
+      "~0/4"
+     ],
+     "tris": 168
+    },
+    {
+     "id": "pine",
+     "mesh": "tree__pine",
+     "cell": 0,
+     "when": [
+      "~1/4"
+     ],
+     "tris": 62
+    },
+    {
+     "id": "poplar",
+     "mesh": "tree__poplar",
+     "cell": 0,
+     "when": [
+      "~2/4"
+     ],
+     "tris": 68
+    },
+    {
+     "id": "apple",
+     "mesh": "tree__apple",
+     "cell": 0,
+     "when": [
+      "~3/4"
+     ],
+     "tris": 424
+    }
+   ]
+  }
+ ]
+}

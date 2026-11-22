@@ -1,0 +1,17 @@
+{
+ "default": "timbermoss",
+ "themes": [
+  {"id": "timbermoss", "name": "Timber & moss", "colors": {
+   "stone": "#AEB39A", "moss": "#86C24E", "timber": "#C08F58", "roof": "#EE7A3C", "cloth": "#E5533D",
+   "grass": "#84C653", "path": "#C2BBAA", "plaster": "#EDE3C8", "iron": "#A9AFB8", "leaves": "#6FBF45"}},
+  {"id": "sandstone", "name": "Sandstone", "colors": {
+   "stone": "#E0C08A", "moss": "#A8C060", "timber": "#B98552", "roof": "#4F7FDB", "cloth": "#E04545",
+   "grass": "#8CC85A", "path": "#D2C7AE", "plaster": "#F0E2C4", "iron": "#B0B4BC", "leaves": "#7CC24E"}},
+  {"id": "whitegold", "name": "White & gold", "colors": {
+   "stone": "#ECE6D8", "moss": "#A9C77A", "timber": "#C9A267", "roof": "#3FC1B8", "cloth": "#F2C14E",
+   "grass": "#8FCB64", "path": "#D8D2C4", "plaster": "#F4EFE3", "iron": "#E0C368", "leaves": "#86C95C"}},
+  {"id": "brickslate", "name": "Brick & slate", "colors": {
+   "stone": "#D2735A", "moss": "#9CC25C", "timber": "#B98957", "roof": "#9FB3C8", "cloth": "#E9E2D2",
+   "grass": "#86C454", "path": "#CFC6B6", "plaster": "#EFE6D6", "iron": "#A7B0BA", "leaves": "#75BE4B"}}
+ ]
+}

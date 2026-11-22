@@ -1,0 +1,5 @@
+out/
+inspiration/
+sync_target.txt
+__pycache__/
+*.blend1
